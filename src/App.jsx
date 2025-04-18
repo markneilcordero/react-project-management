@@ -129,6 +129,8 @@ function App() {
   const [showAddTask, setShowAddTask] = useState(false);
   // Modal state for Add Task
   const [modalOpen, setModalOpen] = useState(false);
+  // Modal state for Add Project
+  const [projectModalOpen, setProjectModalOpen] = useState(false);
 
   const showNotification = (message, type = 'error') => {
     setNotification({ message, type });
@@ -255,6 +257,13 @@ function App() {
     setShowAddTask(false);
   };
 
+  // Helper: handle saving a project from modal
+  const handleModalSaveProject = (project) => {
+    handleSaveProject(project);
+    setShowAddProject(false);
+    setProjectModalOpen(false);
+  };
+
   // Helper: close modal
   const handleCloseModal = () => {
     setModalOpen(false);
@@ -296,16 +305,25 @@ function App() {
           <div className="row">
             <div className="col-12">
               <div className="d-flex justify-content-end mb-3 gap-2">
-                <button className="btn btn-primary" onClick={() => { setShowAddProject(true); setEditingProjectId(null); setModalOpen(false); setShowAddTask(false); }} type="button">+ Add Project</button>
+                <button className="btn btn-primary" onClick={() => { setShowAddProject(true); setProjectModalOpen(true); setEditingProjectId(null); setModalOpen(false); setShowAddTask(false); }} type="button">+ Add Project</button>
                 <button className="btn btn-success" onClick={() => { setModalOpen(true); setShowAddTask(true); setSelectedProjectId(null); }} type="button">+ Add Task</button>
               </div>
               <h2 className="mb-3" tabIndex={0}>Projects</h2>
-              {/* Show ProjectForm if adding or editing */}
-              {(showAddProject || editingProjectId !== null) && (
-                <ProjectForm
-                  onSave={handleSaveProject}
-                  project={editingProjectId !== null ? projects.find((p) => p.id === editingProjectId) : null}
-                />
+              {/* Show ProjectForm in modal if adding or editing */}
+              {projectModalOpen && (
+                <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true">
+                  <div className="modal-dialog modal-dialog-centered" role="document">
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <h5 className="modal-title">Add Project</h5>
+                        <button type="button" className="btn-close" aria-label="Close" onClick={() => { setProjectModalOpen(false); setShowAddProject(false); }}></button>
+                      </div>
+                      <div className="modal-body">
+                        <ProjectForm onSave={handleModalSaveProject} project={editingProjectId !== null ? projects.find((p) => p.id === editingProjectId) : null} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )}
               <ProjectList
                 projects={projects}
@@ -332,7 +350,7 @@ function App() {
           <div className="row">
             <div className="col-md-12">
               <div className="d-flex justify-content-end mb-3 gap-2">
-                <button className="btn btn-primary" onClick={() => { setActiveSection('projects'); setShowAddProject(true); setEditingProjectId(null); setModalOpen(false); setShowAddTask(false); }} type="button">+ Add Project</button>
+                <button className="btn btn-primary" onClick={() => { setActiveSection('projects'); setShowAddProject(true); setProjectModalOpen(true); setEditingProjectId(null); setModalOpen(false); setShowAddTask(false); }} type="button">+ Add Project</button>
                 <button className="btn btn-success" onClick={() => { setModalOpen(true); setShowAddTask(true); setSelectedProjectId(null); }} type="button">+ Add Task</button>
               </div>
               <h2 className="mb-3" tabIndex={0}>All Tasks</h2>
