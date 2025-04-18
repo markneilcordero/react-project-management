@@ -91,7 +91,7 @@ const ProjectForm = ({ onSave, project }) => {
         <div className="row mb-3 g-3 align-items-end">
           <div className="col-12 col-md-6 col-lg-3">
             <div className="d-grid mt-3">
-              <button type="submit" className="btn btn-primary px-5 py-2 fs-5">{project ? 'Update Project' : 'Add Project'}</button>
+              <button type="submit" className="btn btn-primary px-2 py-2">{project ? 'Update Project' : 'Add Project'}</button>
             </div>
           </div>
         </div>
