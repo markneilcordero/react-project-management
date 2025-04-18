@@ -79,9 +79,10 @@ const Dashboard = ({ projects, tasks }) => {
   const statuses = ['Completed', 'In Progress', 'Pending'];
   const statusColors = ['#4caf50', '#2196f3', '#f44336'];
   const projectTitles = projects.map((p) => p.title || 'Untitled');
+  // FIX: Use project.id instead of projectIdx for tasks lookup
   const tasksByProjectAndStatus = statuses.map((status) =>
-    projects.map((_, projectIdx) =>
-      (tasks[projectIdx] || []).filter((t) => t.status === status).length
+    projects.map((p) =>
+      (tasks[p.id] || []).filter((t) => t.status === status).length
     )
   );
   const taskListBarData = {
