@@ -66,12 +66,22 @@ const sampleTasks = {
 };
 
 // Custom hook for localStorage
-function useLocalStorage(key, initialValue) {
+function useLocalStorage(key, initialValue, notifyError) {
   const [value, setValue] = useState(() => {
     try {
       const item = localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
+      if (item) {
+        try {
+          return JSON.parse(item);
+        } catch (parseError) {
+          if (notifyError) notifyError(`Corrupted data for '${key}' was reset.`);
+          localStorage.removeItem(key);
+          return initialValue;
+        }
+      }
+      return initialValue;
     } catch (error) {
+      if (notifyError) notifyError(`Error accessing localStorage for '${key}'.`);
       return initialValue;
     }
   });
@@ -80,22 +90,22 @@ function useLocalStorage(key, initialValue) {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
-      // Optionally handle error
+      if (notifyError) notifyError(`Failed to save '${key}' to localStorage.`);
     }
-  }, [key, value]);
+  }, [key, value, notifyError]);
 
   return [value, setValue];
 }
 
 function App() {
-  const [projects, setProjects] = useLocalStorage('projects', sampleProjects);
+  const [projects, setProjects] = useLocalStorage('projects', sampleProjects, (msg) => showNotification(msg, 'error'));
   const [editingProjectId, setEditingProjectId] = useState(null);
-  const [tasks, setTasks] = useLocalStorage('tasks', sampleTasks);
+  const [tasks, setTasks] = useLocalStorage('tasks', sampleTasks, (msg) => showNotification(msg, 'error'));
   const [editingTaskIndex, setEditingTaskIndex] = useState(null);
   const [notification, setNotification] = useState(null);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
 
-  const showNotification = (message, type) => {
+  const showNotification = (message, type = 'error') => {
     setNotification({ message, type });
   };
 
