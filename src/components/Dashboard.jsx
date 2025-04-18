@@ -19,8 +19,8 @@ const Dashboard = ({ projects, tasks }) => {
   // Calculate project statistics
   const totalProjects = projects.length;
   const completedProjects = projects.filter((p) => p.status === 'Completed').length;
-  const ongoingProjects = projects.filter((p) => p.status === 'Ongoing').length;
-  const pendingProjects = totalProjects - completedProjects - ongoingProjects;
+  const inProgressProjects = projects.filter((p) => p.status === 'In Progress').length;
+  const pendingProjects = totalProjects - completedProjects - inProgressProjects;
 
   // Calculate task statistics
   const totalTasks = Object.values(tasks).flat().length;
@@ -29,10 +29,10 @@ const Dashboard = ({ projects, tasks }) => {
 
   // Data for charts
   const projectData = {
-    labels: ['Completed', 'Ongoing', 'Pending'],
+    labels: ['Completed', 'In Progress', 'Pending'],
     datasets: [
       {
-        data: [completedProjects, ongoingProjects, pendingProjects],
+        data: [completedProjects, inProgressProjects, pendingProjects],
         backgroundColor: ['#4caf50', '#2196f3', '#f44336'],
       },
     ],
@@ -114,8 +114,8 @@ const Dashboard = ({ projects, tasks }) => {
           <div className="col-md-3">
             <div className="card text-center border-info">
               <div className="card-body">
-                <h6 className="card-title">Ongoing</h6>
-                <p className="display-6 mb-0 text-info">{ongoingProjects}</p>
+                <h6 className="card-title">In Progress</h6>
+                <p className="display-6 mb-0 text-info">{inProgressProjects}</p>
               </div>
             </div>
           </div>

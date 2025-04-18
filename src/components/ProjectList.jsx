@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const ProjectList = ({ projects, onEdit, onDelete, onTasks }) => {
+const ProjectList = ({ projects, onEdit, onDelete, onTasks, onStatusChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
 
@@ -40,6 +40,7 @@ const ProjectList = ({ projects, onEdit, onDelete, onTasks }) => {
               <option value="Completed">Completed</option>
               <option value="Ongoing">Ongoing</option>
               <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
             </select>
           </div>
         </div>
@@ -56,8 +57,17 @@ const ProjectList = ({ projects, onEdit, onDelete, onTasks }) => {
                     <p className="mb-1 small">{project.description}</p> {/* Made description smaller */}
                     <small className="text-muted">Status: {project.status || 'Not Set'} | Start: {project.startDate} | End: {project.endDate}</small> {/* Added default status and text-muted */}
                   </div>
-                  <div>
-                    {/* Pass the original index to handlers */}
+                  <div className="d-flex align-items-center">
+                    <select
+                      className="form-select form-select-sm me-2"
+                      style={{ width: 'auto' }}
+                      value={project.status || 'Pending'}
+                      onChange={e => onStatusChange(originalIndex, e.target.value)}
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="In Progress">In Progress</option>
+                      <option value="Completed">Completed</option>
+                    </select>
                     <button onClick={() => onEdit(originalIndex)} className="btn btn-sm btn-outline-warning me-2">Edit</button> {/* Bootstrap button classes */}
                     <button onClick={() => onDelete(originalIndex)} className="btn btn-sm btn-outline-danger me-2">Delete</button> {/* Bootstrap button classes */}
                     <button onClick={() => onTasks(originalIndex)} className="btn btn-sm btn-outline-primary">Tasks</button> {/* New Tasks button */}

@@ -105,6 +105,16 @@ function App() {
     showNotification('All data has been reset!', 'success');
   };
 
+  const handleStatusChange = (index, newStatus) => {
+    const updatedProjects = [...projects];
+    updatedProjects[index] = {
+      ...updatedProjects[index],
+      status: newStatus
+    };
+    setProjects(updatedProjects);
+    showNotification('Project status updated!', 'success');
+  };
+
   return (
     <div className="container mt-4"> {/* Added Bootstrap container and margin-top */}
       {notification && (
@@ -137,6 +147,7 @@ function App() {
             onEdit={handleEditProject}
             onDelete={handleDeleteProject}
             onTasks={setSelectedProjectIndex}
+            onStatusChange={handleStatusChange}
           />
         </div>
         <div className="col-md-6">
