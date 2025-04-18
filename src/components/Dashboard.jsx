@@ -74,20 +74,22 @@ const Dashboard = ({ projects, tasks }) => {
     ],
   };
 
-  // Data for task list (Polar Area)
-  const taskListLabels = Object.entries(tasks).flatMap(([projectIdx, taskArr]) =>
-    (taskArr || []).map((task, i) => `${projects[projectIdx]?.title || 'Project'}: ${task.title || 'Untitled'}`)
+  // Data for task list (Bar Chart: tasks per project by status)
+  const statuses = ['Completed', 'In Progress', 'Pending'];
+  const statusColors = ['#4caf50', '#2196f3', '#f44336'];
+  const projectTitles = projects.map((p) => p.title || 'Untitled');
+  const tasksByProjectAndStatus = statuses.map((status) =>
+    projects.map((_, projectIdx) =>
+      (tasks[projectIdx] || []).filter((t) => t.status === status).length
+    )
   );
-  const taskListData = {
-    labels: taskListLabels.length > 0 ? taskListLabels : ['No Tasks'],
-    datasets: [
-      {
-        data: taskListLabels.length > 0 ? Array(taskListLabels.length).fill(1) : [1],
-        backgroundColor: [
-          '#4caf50', '#2196f3', '#f44336', '#ff9800', '#9c27b0', '#00bcd4', '#8bc34a', '#ffc107', '#e91e63', '#795548',
-        ],
-      },
-    ],
+  const taskListBarData = {
+    labels: projectTitles.length > 0 ? projectTitles : ['No Projects'],
+    datasets: statuses.map((status, i) => ({
+      label: status,
+      data: tasksByProjectAndStatus[i],
+      backgroundColor: statusColors[i],
+    })),
   };
 
   return (
@@ -172,7 +174,18 @@ const Dashboard = ({ projects, tasks }) => {
           </div>
           <div className="col-md-6">
             <h6>Task List</h6>
-            {totalTasks > 0 ? <Doughnut data={taskListData} options={{ responsive: true, plugins: { legend: { position: 'right' } } }} /> : <p className='text-muted'>No task list</p>}
+            {totalTasks > 0 ? (
+              <Bar
+                data={taskListBarData}
+                options={{
+                  responsive: true,
+                  plugins: { legend: { position: 'top' } },
+                  scales: { x: { stacked: true }, y: { stacked: true } },
+                }}
+              />
+            ) : (
+              <p className='text-muted'>No task list</p>
+            )}
           </div>
         </div>
       </div>
