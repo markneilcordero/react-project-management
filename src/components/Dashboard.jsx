@@ -159,35 +159,36 @@ const Dashboard = ({ projects, tasks }) => {
         </div>
         {/* End Bootstrap Card Row for Task Stats */}
         {/* Removed duplicate stat lines, keep only charts and headers */}
-        <div className="row">
-          <div className="col-12 col-md-6 mb-4 mb-md-0">
+        <div className="row g-3 flex-wrap"> {/* Responsive row with gap */}
+          <div className="col-12 col-md-6 mb-4 mb-md-0 d-flex flex-column align-items-center">
             <h6>Project Overview</h6>
-            <div style={{ width: '400px', height: '400px', margin: '0 auto' }}>
-              {totalProjects > 0 ? <Doughnut data={projectData} options={{ responsive: true, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Project Status Distribution' } } }} /> : <p className='text-muted'>No project data</p>}
+            <div style={{ width: '100%', maxWidth: '400px', height: 'auto', aspectRatio: '1', margin: '0 auto' }}>
+              {totalProjects > 0 ? <Doughnut data={projectData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Project Status Distribution' } } }} /> : <p className='text-muted'>No project data</p>}
             </div>
           </div>
-          <div className="col-12 col-md-6 mb-4 mb-md-0">
+          <div className="col-12 col-md-6 mb-4 mb-md-0 d-flex flex-column align-items-center">
             <h6>Projects List</h6>
-            <div style={{ width: '500px', height: '500px', margin: '0 auto' }}>
-              {totalProjects > 0 ? <Doughnut data={projectNamesData} options={{ responsive: true, plugins: { legend: { position: 'right' }, title: { display: true, text: 'Projects' } } }} /> : <p className='text-muted'>No project names</p>}
+            <div style={{ width: '100%', maxWidth: '400px', height: 'auto', aspectRatio: '1', margin: '0 auto' }}>
+              {totalProjects > 0 ? <Doughnut data={projectNamesData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' }, title: { display: true, text: 'Projects' } } }} /> : <p className='text-muted'>No project names</p>}
             </div>
           </div>
         </div>
-        <div className="row mt-4">
-          <div className="col-12 col-md-6 mb-4 mb-md-0">
+        <div className="row g-3 flex-wrap mt-4">
+          <div className="col-12 col-md-6 mb-4 mb-md-0 d-flex flex-column align-items-center">
             <h6>Task Overview</h6>
-            <div style={{ width: '400px', height: '400px', margin: '0 auto' }}>
-              {totalTasks > 0 ? <Doughnut data={taskStatusData} options={{ responsive: true, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Task Status Distribution' } } }} /> : <p className='text-muted'>No task data</p>}
+            <div style={{ width: '100%', maxWidth: '400px', height: 'auto', aspectRatio: '1', margin: '0 auto' }}>
+              {totalTasks > 0 ? <Doughnut data={taskStatusData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Task Status Distribution' } } }} /> : <p className='text-muted'>No task data</p>}
             </div>
           </div>
-          <div className="col-12 col-md-6 mb-4 mb-md-0">
+          <div className="col-12 col-md-6 mb-4 mb-md-0 d-flex flex-column align-items-center">
             <h6>Task List</h6>
-            <div style={{ width: '500px', height: '500px', margin: '0 auto' }}>
+            <div style={{ width: '100%', maxWidth: '500px', height: 'auto', aspectRatio: '1', margin: '0 auto' }}>
               {totalTasks > 0 ? (
                 <Bar
                   data={taskListBarData}
                   options={{
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                       legend: { position: 'top' },
                       title: { display: true, text: 'Tasks per Project by Status' },
