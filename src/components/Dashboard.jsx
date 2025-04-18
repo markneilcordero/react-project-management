@@ -322,7 +322,7 @@ const Dashboard = ({ projects, tasks, onCardClick, onAddProject, onAddTask }) =>
             <div className="card border-info">
               <div className="card-body">
                 <h6 className="card-title dashboard-card-title">🕒 Recent Activity</h6>
-                <ul className="list-group list-group-flush">
+                <div className="recent-activity-list">
                   {[...projects]
                     .filter(p => p.endDate)
                     .sort((a, b) => new Date(b.endDate) - new Date(a.endDate))
@@ -331,30 +331,35 @@ const Dashboard = ({ projects, tasks, onCardClick, onAddProject, onAddTask }) =>
                       const progress = getProjectProgress(p);
                       let badge = 'bg-secondary';
                       let badgeText = 'Unknown';
-                      if (p.status === 'Completed') { badge = 'bg-success'; badgeText = 'Healthy'; }
-                      else if (p.status === 'In Progress') { badge = 'bg-info'; badgeText = 'Active'; }
-                      else if (p.status === 'Pending') { badge = 'bg-warning text-dark'; badgeText = 'Attention'; }
+                      let icon = '📁';
+                      if (p.status === 'Completed') { badge = 'bg-success'; badgeText = 'Healthy'; icon = '✅'; }
+                      else if (p.status === 'In Progress') { badge = 'bg-info'; badgeText = 'Active'; icon = '🔄'; }
+                      else if (p.status === 'Pending') { badge = 'bg-warning text-dark'; badgeText = 'Attention'; icon = '⏳'; }
                       return (
-                        <li key={p.id} className="list-group-item">
-                          <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
-                            <span>
-                              <strong>Project:</strong> {p.title || 'Untitled'}
-                              <span className={`ms-2 badge ${badge}`}>{badgeText}</span>
-                            </span>
-                            <span className="text-muted">End: {new Date(p.endDate).toLocaleDateString()}</span>
-                          </div>
-                          <div className="progress mt-2" style={{ height: '12px' }}>
-                            <div
-                              className={`progress-bar${progress === 100 ? ' bg-success' : progress >= 50 ? ' bg-info' : ' bg-warning'}`}
-                              role="progressbar"
-                              style={{ width: `${progress}%` }}
-                              aria-valuenow={progress}
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            >
+                        <div key={p.id} className="activity-card card mb-2 border-0 shadow-sm" style={{ background: '#f8f9fa' }}>
+                          <div className="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+                            <div className="d-flex align-items-center gap-3">
+                              <span style={{ fontSize: '1.7em' }}>{icon}</span>
+                              <div>
+                                <div className="fw-bold" style={{ fontSize: '1.05em' }}>{p.title || 'Untitled'}</div>
+                                <div className="small text-muted">End: {new Date(p.endDate).toLocaleDateString()}</div>
+                              </div>
+                            </div>
+                            <div className="d-flex flex-column align-items-end gap-1" style={{ minWidth: '160px' }}>
+                              <span className={`badge ${badge}`}>{badgeText}</span>
+                              <div className="progress w-100" style={{ height: '12px', minWidth: '120px', maxWidth: '200px' }}>
+                                <div
+                                  className={`progress-bar${progress === 100 ? ' bg-success' : progress >= 50 ? ' bg-info' : ' bg-warning'}`}
+                                  role="progressbar"
+                                  style={{ width: `${progress}%` }}
+                                  aria-valuenow={progress}
+                                  aria-valuemin="0"
+                                  aria-valuemax="100"
+                                ></div>
+                              </div>
                             </div>
                           </div>
-                        </li>
+                        </div>
                       );
                     })}
                   {/* ...existing code for recent tasks... */}
@@ -363,16 +368,28 @@ const Dashboard = ({ projects, tasks, onCardClick, onAddProject, onAddTask }) =>
                     .filter(t => t.dueDate)
                     .sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate))
                     .slice(0, 2)
-                    .map((t, idx) => (
-                      <li key={t.title + t.dueDate + idx} className="list-group-item d-flex justify-content-between align-items-center">
-                        <span>
-                          <strong>Task:</strong> {t.title}
-                          <span className="ms-2 badge bg-secondary">{t.status}</span>
-                        </span>
-                        <span className="text-muted">Due: {new Date(t.dueDate).toLocaleDateString()}</span>
-                      </li>
-                    ))}
-                </ul>
+                    .map((t, idx) => {
+                      let icon = '📝';
+                      let badge = 'bg-secondary';
+                      if (t.status === 'Completed') { badge = 'bg-success'; icon = '✅'; }
+                      else if (t.status === 'In Progress' || t.status === 'Ongoing') { badge = 'bg-info'; icon = '🔄'; }
+                      else if (t.status === 'Pending') { badge = 'bg-warning text-dark'; icon = '⏳'; }
+                      return (
+                        <div key={t.title + t.dueDate + idx} className="activity-card card mb-2 border-0 shadow-sm" style={{ background: '#fdf6ed' }}>
+                          <div className="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+                            <div className="d-flex align-items-center gap-3">
+                              <span style={{ fontSize: '1.5em' }}>{icon}</span>
+                              <div>
+                                <div className="fw-bold" style={{ fontSize: '1em' }}>{t.title}</div>
+                                <div className="small text-muted">Due: {new Date(t.dueDate).toLocaleDateString()}</div>
+                              </div>
+                            </div>
+                            <span className={`badge ${badge}`}>{t.status}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
               </div>
             </div>
           </div>
