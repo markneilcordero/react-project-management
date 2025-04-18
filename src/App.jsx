@@ -231,9 +231,10 @@ function App() {
 
   // Quick Action handlers
   const handleAddProject = () => {
-    setActiveSection('projects');
+    // setActiveSection('projects'); // Prevent navigation to Projects section
     setEditingProjectId(null);
     setShowAddProject(true);
+    setProjectModalOpen(true);
     setShowAddTask(false);
   };
   // Update handleAddTask to open modal
@@ -285,6 +286,22 @@ function App() {
             onClose={() => setNotification(null)}
           />
         )}
+        {/* Show ProjectForm in modal if adding or editing (always render when projectModalOpen is true) */}
+        {projectModalOpen && (
+          <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true">
+            <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Add Project</h5>
+                  <button type="button" className="btn-close" aria-label="Close" onClick={() => { setProjectModalOpen(false); setShowAddProject(false); }}></button>
+                </div>
+                <div className="modal-body">
+                  <ProjectForm onSave={handleModalSaveProject} project={editingProjectId !== null ? projects.find((p) => p.id === editingProjectId) : null} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         {activeSection === 'dashboard' && (
           <>
             <h1 className="mb-4" tabIndex={0}>Project Management</h1>
@@ -309,22 +326,6 @@ function App() {
                 <button className="btn btn-success" onClick={() => { setModalOpen(true); setShowAddTask(true); setSelectedProjectId(null); }} type="button">+ Add Task</button>
               </div>
               <h2 className="mb-3" tabIndex={0}>Projects</h2>
-              {/* Show ProjectForm in modal if adding or editing */}
-              {projectModalOpen && (
-                <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true">
-                  <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
-                    <div className="modal-content">
-                      <div className="modal-header">
-                        <h5 className="modal-title">Add Project</h5>
-                        <button type="button" className="btn-close" aria-label="Close" onClick={() => { setProjectModalOpen(false); setShowAddProject(false); }}></button>
-                      </div>
-                      <div className="modal-body">
-                        <ProjectForm onSave={handleModalSaveProject} project={editingProjectId !== null ? projects.find((p) => p.id === editingProjectId) : null} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
               <ProjectList
                 projects={projects}
                 onEdit={id => {
