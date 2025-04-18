@@ -40,7 +40,6 @@ const ProjectList = ({ projects, onEdit, onDelete, onTasks, onStatusChange }) =>
               >
                 <option value="All">All Statuses</option>
                 <option value="Completed">Completed</option>
-                <option value="Ongoing">Ongoing</option>
                 <option value="Pending">Pending</option>
                 <option value="In Progress">In Progress</option>
               </select>
