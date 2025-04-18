@@ -8,6 +8,7 @@ import TaskList from './components/TaskList';
 import Dashboard from './components/Dashboard';
 import Notification from './components/Notification';
 import Settings from './components/Settings';
+import Sidebar from './components/Sidebar';
 
 // Add a helper to generate unique IDs
 function generateId() {
@@ -197,68 +198,71 @@ function App() {
   };
 
   return (
-    <div className="container mt-4" role="main">
-      {notification && (
-        <Notification
-          message={notification.message}
-          type={notification.type}
-          onClose={() => setNotification(null)}
-        />
-      )}
-      <h1 className="mb-4" tabIndex={0}>Project Management</h1>
-      <div className="row mb-4">
-        <div className="col-md-12">
-          <Dashboard projects={projects} tasks={tasks} />
-        </div>
-      </div>
-      <div className="row mb-4">
-        <div className="col-md-6">
-          <Settings onResetData={handleResetData} />
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-md-6">
-          <h2 className="mb-3" tabIndex={0}>Projects</h2>
-          <ProjectForm
-            onSave={handleSaveProject}
-            project={editingProjectId !== null ? projects.find((p) => p.id === editingProjectId) : null}
+    <div className="d-flex">
+      <Sidebar />
+      <div className="flex-grow-1 container mt-4" role="main">
+        {notification && (
+          <Notification
+            message={notification.message}
+            type={notification.type}
+            onClose={() => setNotification(null)}
           />
-          <ProjectList
-            projects={projects}
-            onEdit={handleEditProject}
-            onDelete={handleDeleteProject}
-            onTasks={handleProjectSelection}
-            onStatusChange={handleStatusChange}
-          />
+        )}
+        <h1 className="mb-4" tabIndex={0}>Project Management</h1>
+        <div className="row mb-4">
+          <div className="col-md-12">
+            <Dashboard projects={projects} tasks={tasks} />
+          </div>
         </div>
-        <div className="col-md-6">
-          {selectedProjectId !== null && projects.find((p) => p.id === selectedProjectId) && (
-            <div className="mb-4" aria-live="polite">
-              <h2 className="mb-3" tabIndex={0}>
-                Tasks for {projects.find((p) => p.id === selectedProjectId).title}
-              </h2>
-              <TaskForm
-                onSave={(task) => handleSaveTask(selectedProjectId, task)}
-                task={editingTaskIndex !== null ? (tasks[selectedProjectId]?.[editingTaskIndex] || null) : null}
-              />
-              <TaskList
-                tasks={tasks[selectedProjectId] || []}
-                onEdit={handleEditTask}
-                onDelete={(taskIndex) => handleDeleteTask(selectedProjectId, taskIndex)}
-              />
-              <button
-                className="btn btn-secondary mt-2"
-                onClick={() => {
-                  setSelectedProjectId(null);
-                  setEditingProjectId(null);
-                  setEditingTaskIndex(null);
-                }}
-                aria-label="Close task list and return to projects"
-              >
-                Close Tasks
-              </button>
-            </div>
-          )}
+        <div className="row mb-4">
+          <div className="col-md-6">
+            <Settings onResetData={handleResetData} />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-md-6">
+            <h2 className="mb-3" tabIndex={0}>Projects</h2>
+            <ProjectForm
+              onSave={handleSaveProject}
+              project={editingProjectId !== null ? projects.find((p) => p.id === editingProjectId) : null}
+            />
+            <ProjectList
+              projects={projects}
+              onEdit={handleEditProject}
+              onDelete={handleDeleteProject}
+              onTasks={handleProjectSelection}
+              onStatusChange={handleStatusChange}
+            />
+          </div>
+          <div className="col-md-6">
+            {selectedProjectId !== null && projects.find((p) => p.id === selectedProjectId) && (
+              <div className="mb-4" aria-live="polite">
+                <h2 className="mb-3" tabIndex={0}>
+                  Tasks for {projects.find((p) => p.id === selectedProjectId).title}
+                </h2>
+                <TaskForm
+                  onSave={(task) => handleSaveTask(selectedProjectId, task)}
+                  task={editingTaskIndex !== null ? (tasks[selectedProjectId]?.[editingTaskIndex] || null) : null}
+                />
+                <TaskList
+                  tasks={tasks[selectedProjectId] || []}
+                  onEdit={handleEditTask}
+                  onDelete={(taskIndex) => handleDeleteTask(selectedProjectId, taskIndex)}
+                />
+                <button
+                  className="btn btn-secondary mt-2"
+                  onClick={() => {
+                    setSelectedProjectId(null);
+                    setEditingProjectId(null);
+                    setEditingTaskIndex(null);
+                  }}
+                  aria-label="Close task list and return to projects"
+                >
+                  Close Tasks
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
