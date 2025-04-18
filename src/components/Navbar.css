@@ -93,6 +93,10 @@
     background: rgba(255,255,255,0.1);
     color: #ffc107;
   }
+  /* Add margin-top to main content on mobile to prevent overlap with fixed Navbar */
+  .flex-grow-1.container {
+    margin-top: 64px !important;
+  }
 }
 
 @media (min-width: 992px) {
