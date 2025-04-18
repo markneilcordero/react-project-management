@@ -295,6 +295,7 @@ function App() {
                   setShowAddTask(true);
                   setShowAddProject(false);
                   setEditingProjectId(null);
+                  setActiveSection('tasks'); // Fix: Go to Tasks section
                 }}
                 onStatusChange={handleStatusChange}
                 filterStatus={projectFilter}
