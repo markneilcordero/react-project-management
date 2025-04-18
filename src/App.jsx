@@ -57,39 +57,35 @@ const sampleTasks = {
   ],
 };
 
+// Custom hook for localStorage
+function useLocalStorage(key, initialValue) {
+  const [value, setValue] = useState(() => {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      return initialValue;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      // Optionally handle error
+    }
+  }, [key, value]);
+
+  return [value, setValue];
+}
+
 function App() {
-  const [projects, setProjects] = useState(() => {
-    const savedProjects = localStorage.getItem('projects');
-    if (savedProjects) return JSON.parse(savedProjects);
-    return sampleProjects;
-  });
+  const [projects, setProjects] = useLocalStorage('projects', sampleProjects);
   const [editingIndex, setEditingIndex] = useState(null);
-  const [tasks, setTasks] = useState(() => {
-    const savedTasks = localStorage.getItem('tasks');
-    if (savedTasks) return JSON.parse(savedTasks);
-    return sampleTasks;
-  });
+  const [tasks, setTasks] = useLocalStorage('tasks', sampleTasks);
   const [editingTaskIndex, setEditingTaskIndex] = useState(null);
   const [notification, setNotification] = useState(null);
   const [selectedProjectIndex, setSelectedProjectIndex] = useState(null);
-
-  useEffect(() => {
-    localStorage.setItem('projects', JSON.stringify(projects));
-  }, [projects]);
-
-  useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }, [tasks]);
-
-  // Add data to local storage on first load if not present
-  useEffect(() => {
-    if (!localStorage.getItem('projects')) {
-      localStorage.setItem('projects', JSON.stringify(projects));
-    }
-    if (!localStorage.getItem('tasks')) {
-      localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
-  }, []);
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
