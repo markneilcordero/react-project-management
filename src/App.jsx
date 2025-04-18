@@ -87,11 +87,14 @@ function useLocalStorage(key, initialValue, notifyError) {
   });
 
   useEffect(() => {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      if (notifyError) notifyError(`Failed to save '${key}' to localStorage.`);
-    }
+    const handler = setTimeout(() => {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (error) {
+        if (notifyError) notifyError(`Failed to save '${key}' to localStorage.`);
+      }
+    }, 400); // Debounce delay in ms
+    return () => clearTimeout(handler);
   }, [key, value, notifyError]);
 
   return [value, setValue];
@@ -194,7 +197,7 @@ function App() {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4" role="main">
       {notification && (
         <Notification
           message={notification.message}
@@ -202,7 +205,7 @@ function App() {
           onClose={() => setNotification(null)}
         />
       )}
-      <h1 className="mb-4">Project Management</h1>
+      <h1 className="mb-4" tabIndex={0}>Project Management</h1>
       <div className="row mb-4">
         <div className="col-md-12">
           <Dashboard projects={projects} tasks={tasks} />
@@ -215,7 +218,7 @@ function App() {
       </div>
       <div className="row">
         <div className="col-md-6">
-          <h2 className="mb-3">Projects</h2>
+          <h2 className="mb-3" tabIndex={0}>Projects</h2>
           <ProjectForm
             onSave={handleSaveProject}
             project={editingProjectId !== null ? projects.find((p) => p.id === editingProjectId) : null}
@@ -230,8 +233,10 @@ function App() {
         </div>
         <div className="col-md-6">
           {selectedProjectId !== null && projects.find((p) => p.id === selectedProjectId) && (
-            <div className="mb-4">
-              <h2 className="mb-3">Tasks for {projects.find((p) => p.id === selectedProjectId).title}</h2>
+            <div className="mb-4" aria-live="polite">
+              <h2 className="mb-3" tabIndex={0}>
+                Tasks for {projects.find((p) => p.id === selectedProjectId).title}
+              </h2>
               <TaskForm
                 onSave={(task) => handleSaveTask(selectedProjectId, task)}
                 task={editingTaskIndex !== null ? (tasks[selectedProjectId]?.[editingTaskIndex] || null) : null}
@@ -241,11 +246,17 @@ function App() {
                 onEdit={handleEditTask}
                 onDelete={(taskIndex) => handleDeleteTask(selectedProjectId, taskIndex)}
               />
-              <button className="btn btn-secondary mt-2" onClick={() => {
-                setSelectedProjectId(null);
-                setEditingProjectId(null);
-                setEditingTaskIndex(null);
-              }}>Close Tasks</button>
+              <button
+                className="btn btn-secondary mt-2"
+                onClick={() => {
+                  setSelectedProjectId(null);
+                  setEditingProjectId(null);
+                  setEditingTaskIndex(null);
+                }}
+                aria-label="Close task list and return to projects"
+              >
+                Close Tasks
+              </button>
             </div>
           )}
         </div>
