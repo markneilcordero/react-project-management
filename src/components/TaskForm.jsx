@@ -5,6 +5,7 @@ const TaskForm = ({ onSave, task }) => {
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('Low');
   const [dueDate, setDueDate] = useState('');
+  const [status, setStatus] = useState('Pending');
 
   // Use useEffect to update form when 'task' prop changes (for editing)
   useEffect(() => {
@@ -13,23 +14,26 @@ const TaskForm = ({ onSave, task }) => {
       setDescription(task.description || '');
       setPriority(task.priority || 'Low');
       setDueDate(task.dueDate || '');
+      setStatus(task.status || 'Pending');
     } else {
       // Reset form when switching from edit to add
       setTitle('');
       setDescription('');
       setPriority('Low');
       setDueDate('');
+      setStatus('Pending');
     }
   }, [task]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ title, description, priority, dueDate });
+    onSave({ title, description, priority, dueDate, status });
     // Reset form after saving
     setTitle('');
     setDescription('');
     setPriority('Low');
     setDueDate('');
+    setStatus('Pending');
   };
 
   return (
@@ -55,7 +59,7 @@ const TaskForm = ({ onSave, task }) => {
           required
         ></textarea>
       </div>
-      <div className="row mb-3"> {/* Use row for priority and due date */}
+      <div className="row mb-3"> {/* Use row for priority, due date, and status */}
         <div className="col"> {/* Column for priority */}
           <label htmlFor="taskPriority" className="form-label">Priority:</label> {/* Added Bootstrap class */}
           <select
@@ -80,6 +84,20 @@ const TaskForm = ({ onSave, task }) => {
             onChange={(e) => setDueDate(e.target.value)}
             required
           />
+        </div>
+        <div className="col"> {/* Column for status */}
+          <label htmlFor="taskStatus" className="form-label">Status:</label> {/* Added Bootstrap class */}
+          <select
+            id="taskStatus" // Added id
+            className="form-select" // Added Bootstrap class
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            required
+          >
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+          </select>
         </div>
       </div>
       <button type="submit" className="btn btn-success">{task ? 'Update Task' : 'Add Task'}</button> {/* Added Bootstrap classes and dynamic text */}
