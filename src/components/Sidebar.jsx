@@ -21,7 +21,7 @@ const Sidebar = ({ activeSection, onSectionChange }) => {
       >
         <span className="hamburger" />
       </button>
-      <aside className={`sidebar bg-primary text-white${isOpen ? ' open' : ''}`}>
+      <aside className={`sidebar text-white${isOpen ? ' open' : ''}`}>
         <div className="sidebar-header p-3 mb-4">
           <h2 className="h4">Project Manager</h2>
         </div>
