@@ -9,6 +9,7 @@ import Dashboard from './components/Dashboard';
 import Notification from './components/Notification';
 import Settings from './components/Settings';
 import Sidebar from './components/Sidebar';
+import Navbar from './components/Navbar';
 
 // Add a helper to generate unique IDs
 function generateId() {
@@ -101,6 +102,17 @@ function useLocalStorage(key, initialValue, notifyError) {
   return [value, setValue];
 }
 
+// Custom hook to get window width
+function useWindowWidth() {
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return width;
+}
+
 function App() {
   const [projects, setProjects] = useLocalStorage('projects', sampleProjects, (msg) => showNotification(msg, 'error'));
   const [editingProjectId, setEditingProjectId] = useState(null);
@@ -109,6 +121,8 @@ function App() {
   const [notification, setNotification] = useState(null);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [activeSection, setActiveSection] = useState('dashboard');
+  const width = useWindowWidth();
+  const isDesktop = width >= 992;
 
   const showNotification = (message, type = 'error') => {
     setNotification({ message, type });
@@ -200,7 +214,11 @@ function App() {
 
   return (
     <div className="d-flex">
-      <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
+      {isDesktop ? (
+        <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
+      ) : (
+        <Navbar activeSection={activeSection} onSectionChange={setActiveSection} />
+      )}
       <div className="flex-grow-1 container mt-4" role="main">
         {notification && (
           <Notification
