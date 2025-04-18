@@ -30,6 +30,27 @@ const sampleProjects = [
   { id: 'p8', title: 'Content Creation', description: 'Create new blog and social content.', startDate: '2025-04-03', endDate: '2025-04-30', status: 'In Progress' },
   { id: 'p9', title: 'Customer Survey', description: 'Survey customers for feedback.', startDate: '2025-04-07', endDate: '2025-04-21', status: 'Pending' },
   { id: 'p10', title: 'Bug Fixes', description: 'Fix critical bugs in production.', startDate: '2025-04-01', endDate: '2025-04-10', status: 'Completed' },
+  // Added 20 more projects
+  { id: 'p11', title: 'New Feature Development', description: 'Develop feature X for the main product.', startDate: '2025-05-01', endDate: '2025-06-15', status: 'Pending' },
+  { id: 'p12', title: 'Server Upgrade', description: 'Upgrade production servers.', startDate: '2025-05-05', endDate: '2025-05-12', status: 'Pending' },
+  { id: 'p13', title: 'UI/UX Improvement', description: 'Improve user interface based on feedback.', startDate: '2025-05-10', endDate: '2025-06-10', status: 'In Progress' },
+  { id: 'p14', title: 'Documentation Update', description: 'Update all project documentation.', startDate: '2025-05-15', endDate: '2025-05-30', status: 'Pending' },
+  { id: 'p15', title: 'Performance Optimization', description: 'Optimize application performance.', startDate: '2025-05-20', endDate: '2025-06-20', status: 'In Progress' },
+  { id: 'p16', title: 'Competitor Analysis', description: 'Analyze key competitors.', startDate: '2025-05-25', endDate: '2025-06-05', status: 'Pending' },
+  { id: 'p17', title: 'User Testing Round 2', description: 'Conduct second round of user testing.', startDate: '2025-06-01', endDate: '2025-06-10', status: 'Pending' },
+  { id: 'p18', title: 'Refactor Legacy Code', description: 'Refactor old codebase sections.', startDate: '2025-06-05', endDate: '2025-07-05', status: 'In Progress' },
+  { id: 'p19', title: 'Onboarding Process Refinement', description: 'Improve new user onboarding flow.', startDate: '2025-06-10', endDate: '2025-06-25', status: 'Pending' },
+  { id: 'p20', title: 'Analytics Integration', description: 'Integrate new analytics tool.', startDate: '2025-06-15', endDate: '2025-06-30', status: 'Pending' },
+  { id: 'p21', title: 'Q2 Report Generation', description: 'Generate quarterly performance report.', startDate: '2025-07-01', endDate: '2025-07-07', status: 'Pending' },
+  { id: 'p22', title: 'Social Media Strategy', description: 'Develop new social media plan.', startDate: '2025-07-05', endDate: '2025-07-20', status: 'Pending' },
+  { id: 'p23', title: 'A/B Testing Setup', description: 'Set up A/B tests for homepage.', startDate: '2025-07-10', endDate: '2025-07-15', status: 'Pending' },
+  { id: 'p24', title: 'Accessibility Audit', description: 'Audit website for WCAG compliance.', startDate: '2025-07-15', endDate: '2025-07-30', status: 'Pending' },
+  { id: 'p25', title: 'Email Marketing Setup', description: 'Set up email marketing flows.', startDate: '2025-07-20', endDate: '2025-08-05', status: 'Pending' },
+  { id: 'p26', title: 'Partnership Outreach', description: 'Reach out to potential partners.', startDate: '2025-07-25', endDate: '2025-08-15', status: 'Pending' },
+  { id: 'p27', title: 'Internal Tool Development', description: 'Build an internal tool for team.', startDate: '2025-08-01', endDate: '2025-09-01', status: 'Pending' },
+  { id: 'p28', title: 'Code Review Process', description: 'Establish a formal code review process.', startDate: '2025-08-05', endDate: '2025-08-12', status: 'Pending' },
+  { id: 'p29', title: 'Disaster Recovery Plan', description: 'Create a disaster recovery plan.', startDate: '2025-08-10', endDate: '2025-08-25', status: 'Pending' },
+  { id: 'p30', title: 'Year-End Planning', description: 'Plan projects for the next year.', startDate: '2025-08-15', endDate: '2025-09-15', status: 'Pending' },
 ];
 
 // Map sample tasks to use project ids as keys
@@ -66,6 +87,88 @@ const sampleTasks = {
   ],
   p10: [
     { title: 'Fix login bug', description: 'Resolve login issue for users.', priority: 'High', dueDate: '2025-04-03', status: 'Completed' },
+  ],
+  // Added tasks for new projects
+  p11: [
+    { title: 'Define requirements', description: 'Finalize requirements for feature X.', priority: 'High', dueDate: '2025-05-05', status: 'Pending' },
+    { title: 'Develop backend', description: 'Implement backend logic.', priority: 'High', dueDate: '2025-05-20', status: 'Pending' },
+    { title: 'Develop frontend', description: 'Implement frontend UI.', priority: 'Medium', dueDate: '2025-06-01', status: 'Pending' },
+  ],
+  p12: [
+    { title: 'Plan upgrade', description: 'Create detailed upgrade plan.', priority: 'High', dueDate: '2025-05-06', status: 'Pending' },
+    { title: 'Perform upgrade', description: 'Execute server upgrade.', priority: 'High', dueDate: '2025-05-10', status: 'Pending' },
+  ],
+  p13: [
+    { title: 'Gather feedback', description: 'Collect user feedback on current UI.', priority: 'Medium', dueDate: '2025-05-15', status: 'In Progress' },
+    { title: 'Design improvements', description: 'Design new UI elements.', priority: 'Medium', dueDate: '2025-05-25', status: 'Pending' },
+  ],
+  p14: [
+    { title: 'Review existing docs', description: 'Identify outdated documentation.', priority: 'Low', dueDate: '2025-05-20', status: 'Pending' },
+    { title: 'Write new sections', description: 'Add documentation for new features.', priority: 'Medium', dueDate: '2025-05-28', status: 'Pending' },
+  ],
+  p15: [
+    { title: 'Identify bottlenecks', description: 'Profile application to find slow areas.', priority: 'High', dueDate: '2025-05-25', status: 'In Progress' },
+    { title: 'Implement optimizations', description: 'Apply performance improvements.', priority: 'High', dueDate: '2025-06-10', status: 'Pending' },
+  ],
+  p16: [
+    { title: 'List competitors', description: 'Identify main competitors.', priority: 'Low', dueDate: '2025-05-28', status: 'Pending' },
+    { title: 'Analyze features', description: 'Compare feature sets.', priority: 'Medium', dueDate: '2025-06-02', status: 'Pending' },
+  ],
+  p17: [
+    { title: 'Recruit testers', description: 'Find participants for user testing.', priority: 'Medium', dueDate: '2025-06-03', status: 'Pending' },
+    { title: 'Conduct sessions', description: 'Run testing sessions.', priority: 'High', dueDate: '2025-06-08', status: 'Pending' },
+  ],
+  p18: [
+    { title: 'Identify modules', description: 'Select legacy modules for refactoring.', priority: 'Medium', dueDate: '2025-06-10', status: 'In Progress' },
+    { title: 'Refactor module A', description: 'Rewrite module A.', priority: 'High', dueDate: '2025-06-25', status: 'Pending' },
+  ],
+  p19: [
+    { title: 'Map current flow', description: 'Document the existing onboarding process.', priority: 'Medium', dueDate: '2025-06-15', status: 'Pending' },
+    { title: 'Design new flow', description: 'Create improved onboarding steps.', priority: 'High', dueDate: '2025-06-22', status: 'Pending' },
+  ],
+  p20: [
+    { title: 'Choose tool', description: 'Select an analytics provider.', priority: 'Medium', dueDate: '2025-06-18', status: 'Pending' },
+    { title: 'Implement tracking', description: 'Add tracking code to application.', priority: 'High', dueDate: '2025-06-28', status: 'Pending' },
+  ],
+  p21: [
+    { title: 'Gather data', description: 'Collect performance metrics for Q2.', priority: 'High', dueDate: '2025-07-03', status: 'Pending' },
+    { title: 'Write report', description: 'Compile and write the Q2 report.', priority: 'Medium', dueDate: '2025-07-06', status: 'Pending' },
+  ],
+  p22: [
+    { title: 'Analyze current strategy', description: 'Review effectiveness of current social media.', priority: 'Low', dueDate: '2025-07-10', status: 'Pending' },
+    { title: 'Develop new plan', description: 'Outline new strategy and content calendar.', priority: 'Medium', dueDate: '2025-07-18', status: 'Pending' },
+  ],
+  p23: [
+    { title: 'Define test variants', description: 'Decide on homepage variations for testing.', priority: 'Medium', dueDate: '2025-07-12', status: 'Pending' },
+    { title: 'Configure A/B test tool', description: 'Set up the test in the A/B testing software.', priority: 'High', dueDate: '2025-07-14', status: 'Pending' },
+  ],
+  p24: [
+    { title: 'Run automated checks', description: 'Use tools to scan for accessibility issues.', priority: 'Medium', dueDate: '2025-07-20', status: 'Pending' },
+    { title: 'Manual review', description: 'Manually test key user flows for accessibility.', priority: 'High', dueDate: '2025-07-28', status: 'Pending' },
+  ],
+  p25: [
+    { title: 'Select email platform', description: 'Choose an email marketing service.', priority: 'Medium', dueDate: '2025-07-25', status: 'Pending' },
+    { title: 'Create email templates', description: 'Design and build email templates.', priority: 'Medium', dueDate: '2025-08-01', status: 'Pending' },
+  ],
+  p26: [
+    { title: 'Identify potential partners', description: 'List companies for potential partnerships.', priority: 'Medium', dueDate: '2025-07-30', status: 'Pending' },
+    { title: 'Draft outreach emails', description: 'Write initial contact emails.', priority: 'Low', dueDate: '2025-08-05', status: 'Pending' },
+  ],
+  p27: [
+    { title: 'Gather requirements', description: 'Define the needs for the internal tool.', priority: 'High', dueDate: '2025-08-07', status: 'Pending' },
+    { title: 'Develop prototype', description: 'Build a basic working version.', priority: 'Medium', dueDate: '2025-08-20', status: 'Pending' },
+  ],
+  p28: [
+    { title: 'Define guidelines', description: 'Write code review standards and guidelines.', priority: 'Medium', dueDate: '2025-08-08', status: 'Pending' },
+    { title: 'Train team', description: 'Conduct a session on the new process.', priority: 'Low', dueDate: '2025-08-11', status: 'Pending' },
+  ],
+  p29: [
+    { title: 'Assess risks', description: 'Identify potential disaster scenarios.', priority: 'High', dueDate: '2025-08-15', status: 'Pending' },
+    { title: 'Document procedures', description: 'Write down recovery steps.', priority: 'High', dueDate: '2025-08-22', status: 'Pending' },
+  ],
+  p30: [
+    { title: 'Brainstorm ideas', description: 'Generate project ideas for next year.', priority: 'Medium', dueDate: '2025-08-25', status: 'Pending' },
+    { title: 'Prioritize projects', description: 'Select and prioritize projects.', priority: 'High', dueDate: '2025-09-10', status: 'Pending' },
   ],
 };
 
