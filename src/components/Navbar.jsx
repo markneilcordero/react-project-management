@@ -11,19 +11,22 @@ const Navbar = ({ activeSection, onSectionChange }) => {
   };
 
   return (
-    <nav className="navbar-mobile">
-      <div className="navbar-mobile-header">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark navbar-mobile">
+      <div className="container-fluid navbar-mobile-header">
+        <span className="navbar-mobile-title navbar-brand">Project Manager</span>
         <button
-          className="navbar-mobile-toggle"
+          className="navbar-toggler"
+          type="button"
           aria-label="Toggle navigation"
           aria-expanded={isOpen}
           onClick={handleToggle}
         >
-          <span className="navbar-hamburger" />
+          <span className="navbar-toggler-icon" />
         </button>
-        <span className="navbar-mobile-title">Project Manager</span>
       </div>
-      <ul className={`navbar-mobile-menu${isOpen ? ' open' : ''}`}>
+      <ul className={`navbar-mobile-menu${isOpen ? ' open' : ''}`}
+        style={{ display: isOpen ? 'flex' : 'none' }}
+      >
         <li>
           <button className={activeSection === 'dashboard' ? 'active' : ''} onClick={() => handleNavClick('dashboard')}>Dashboard</button>
         </li>
