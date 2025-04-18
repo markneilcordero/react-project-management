@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pie, Bar } from 'react-chartjs-2';
+import { Pie, Bar, Radar, Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   ArcElement,
@@ -8,9 +8,12 @@ import {
   CategoryScale,
   LinearScale,
   BarElement,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
 } from 'chart.js';
 
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, RadialLinearScale, PointElement, LineElement);
 
 const Dashboard = ({ projects, tasks }) => {
   // Calculate project statistics
@@ -41,6 +44,20 @@ const Dashboard = ({ projects, tasks }) => {
       {
         data: [completedTasks, pendingTasks],
         backgroundColor: ['#4caf50', '#f44336'],
+      },
+    ],
+  };
+
+  // Data for project names chart
+  const projectNames = projects.map((p) => p.title || 'Untitled');
+  const projectNamesData = {
+    labels: projectNames.length > 0 ? projectNames : ['No Projects'],
+    datasets: [
+      {
+        data: projectNames.length > 0 ? Array(projectNames.length).fill(1) : [1],
+        backgroundColor: [
+          '#4caf50', '#2196f3', '#f44336', '#ff9800', '#9c27b0', '#00bcd4', '#8bc34a', '#ffc107', '#e91e63', '#795548',
+        ],
       },
     ],
   };
@@ -116,6 +133,10 @@ const Dashboard = ({ projects, tasks }) => {
           <div className="col-md-6 mb-4 mb-md-0">
             <h6>Project Overview</h6>
             {totalProjects > 0 ? <Pie data={projectData} options={{ responsive: true }} /> : <p className='text-muted'>No project data</p>}
+          </div>
+          <div className="col-md-6 mb-4 mb-md-0">
+            <h6>Projects List</h6>
+            {totalProjects > 0 ? <Doughnut data={projectNamesData} options={{ responsive: true, plugins: { legend: { position: 'right' } } }} /> : <p className='text-muted'>No project names</p>}
           </div>
           <div className="col-md-6">
             <h6>Task Overview</h6>
