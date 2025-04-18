@@ -162,45 +162,55 @@ const Dashboard = ({ projects, tasks }) => {
         <div className="row">
           <div className="col-12 col-md-6 mb-4 mb-md-0">
             <h6>Project Overview</h6>
-            {totalProjects > 0 ? <Doughnut data={projectData} options={{ responsive: true, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Project Status Distribution' } } }} /> : <p className='text-muted'>No project data</p>}
+            <div style={{ width: '400px', height: '400px', margin: '0 auto' }}>
+              {totalProjects > 0 ? <Doughnut data={projectData} options={{ responsive: true, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Project Status Distribution' } } }} /> : <p className='text-muted'>No project data</p>}
+            </div>
           </div>
           <div className="col-12 col-md-6 mb-4 mb-md-0">
             <h6>Projects List</h6>
-            {totalProjects > 0 ? <Doughnut data={projectNamesData} options={{ responsive: true, plugins: { legend: { position: 'right' }, title: { display: true, text: 'Projects' } } }} /> : <p className='text-muted'>No project names</p>}
+            <div style={{ width: '500px', height: '500px', margin: '0 auto' }}>
+              {totalProjects > 0 ? <Doughnut data={projectNamesData} options={{ responsive: true, plugins: { legend: { position: 'right' }, title: { display: true, text: 'Projects' } } }} /> : <p className='text-muted'>No project names</p>}
+            </div>
           </div>
+        </div>
+        <div className="row mt-4">
           <div className="col-12 col-md-6 mb-4 mb-md-0">
             <h6>Task Overview</h6>
-            {totalTasks > 0 ? <Doughnut data={taskStatusData} options={{ responsive: true, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Task Status Distribution' } } }} /> : <p className='text-muted'>No task data</p>}
+            <div style={{ width: '400px', height: '400px', margin: '0 auto' }}>
+              {totalTasks > 0 ? <Doughnut data={taskStatusData} options={{ responsive: true, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Task Status Distribution' } } }} /> : <p className='text-muted'>No task data</p>}
+            </div>
           </div>
           <div className="col-12 col-md-6 mb-4 mb-md-0">
             <h6>Task List</h6>
-            {totalTasks > 0 ? (
-              <Bar
-                data={taskListBarData}
-                options={{
-                  responsive: true,
-                  plugins: {
-                    legend: { position: 'top' },
-                    title: { display: true, text: 'Tasks per Project by Status' },
-                    tooltip: { enabled: true }
-                  },
-                  scales: {
-                    x: { stacked: true, title: { display: true, text: 'Projects' } },
-                    y: {
-                      stacked: true,
-                      title: { display: true, text: 'Number of Tasks' },
-                      beginAtZero: true,
-                      ticks: {
-                        stepSize: 1,
-                        callback: function(value) { return Number.isInteger(value) ? value : null; }
+            <div style={{ width: '500px', height: '500px', margin: '0 auto' }}>
+              {totalTasks > 0 ? (
+                <Bar
+                  data={taskListBarData}
+                  options={{
+                    responsive: true,
+                    plugins: {
+                      legend: { position: 'top' },
+                      title: { display: true, text: 'Tasks per Project by Status' },
+                      tooltip: { enabled: true }
+                    },
+                    scales: {
+                      x: { stacked: true, title: { display: true, text: 'Projects' } },
+                      y: {
+                        stacked: true,
+                        title: { display: true, text: 'Number of Tasks' },
+                        beginAtZero: true,
+                        ticks: {
+                          stepSize: 1,
+                          callback: function(value) { return Number.isInteger(value) ? value : null; }
+                        }
                       }
-                    }
-                  },
-                }}
-              />
-            ) : (
-              <p className='text-muted'>No task list</p>
-            )}
+                    },
+                  }}
+                />
+              ) : (
+                <p className='text-muted'>No task list</p>
+              )}
+            </div>
           </div>
         </div>
       </div>
