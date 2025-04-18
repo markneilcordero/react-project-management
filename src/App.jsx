@@ -295,7 +295,8 @@ function App() {
         {activeSection === 'projects' && (
           <div className="row">
             <div className="col-12">
-              <div className="d-flex justify-content-end mb-3">
+              <div className="d-flex justify-content-end mb-3 gap-2">
+                <button className="btn btn-primary" onClick={() => { setShowAddProject(true); setEditingProjectId(null); setModalOpen(false); setShowAddTask(false); }} type="button">+ Add Project</button>
                 <button className="btn btn-success" onClick={() => { setModalOpen(true); setShowAddTask(true); setSelectedProjectId(null); }} type="button">+ Add Task</button>
               </div>
               <h2 className="mb-3" tabIndex={0}>Projects</h2>
@@ -330,7 +331,8 @@ function App() {
         {activeSection === 'tasks' && (
           <div className="row">
             <div className="col-md-12">
-              <div className="d-flex justify-content-end mb-3">
+              <div className="d-flex justify-content-end mb-3 gap-2">
+                <button className="btn btn-primary" onClick={() => { setActiveSection('projects'); setShowAddProject(true); setEditingProjectId(null); setModalOpen(false); setShowAddTask(false); }} type="button">+ Add Project</button>
                 <button className="btn btn-success" onClick={() => { setModalOpen(true); setShowAddTask(true); setSelectedProjectId(null); }} type="button">+ Add Task</button>
               </div>
               <h2 className="mb-3" tabIndex={0}>All Tasks</h2>
