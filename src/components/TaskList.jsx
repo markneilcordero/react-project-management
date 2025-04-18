@@ -59,9 +59,9 @@ const TaskList = ({ tasks, onEdit, onDelete }) => {
                   <p className="mb-1">{task.description}</p>
                   <small className="text-muted">Priority: {task.priority} | Due: {task.dueDate}</small> {/* Added text-muted */}
                 </div>
-                <div>
-                  <button onClick={() => onEdit(index + (currentPage-1)*pageSize)} className="btn btn-sm btn-outline-warning me-2">Edit</button> {/* Bootstrap button classes */}
-                  <button onClick={() => onDelete(index + (currentPage-1)*pageSize)} className="btn btn-sm btn-outline-danger">Delete</button> {/* Bootstrap button classes */}
+                <div className="d-flex flex-column flex-md-row">
+                  <button onClick={() => onEdit(index + (currentPage-1)*pageSize)} className="btn btn-sm btn-outline-warning mb-2 mb-md-0 me-md-2">Edit</button>
+                  <button onClick={() => onDelete(index + (currentPage-1)*pageSize)} className="btn btn-sm btn-outline-danger">Delete</button>
                 </div>
               </li>
             ))}
