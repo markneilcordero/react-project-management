@@ -308,19 +308,25 @@ function App() {
           <div className="row">
             <div className="col-md-12">
               <h2 className="mb-3" tabIndex={0}>All Tasks</h2>
-              {/* Render all tasks for all projects */}
+              {/* Render all tasks for all projects inside Bootstrap cards */}
               {projects.map((project) => (
                 <div key={project.id} className="mb-4">
-                  <h5>{project.title}</h5>
-                  <TaskList
-                    tasks={tasks[project.id] || []}
-                    onEdit={(taskIndex) => {
-                      setSelectedProjectId(project.id);
-                      setEditingTaskIndex(taskIndex);
-                      setActiveSection('projects');
-                    }}
-                    onDelete={(taskIndex) => handleDeleteTask(project.id, taskIndex)}
-                  />
+                  <div className="card">
+                    <div className="card-header bg-primary text-white">
+                      <h5 className="mb-0">{project.title}</h5>
+                    </div>
+                    <div className="card-body">
+                      <TaskList
+                        tasks={tasks[project.id] || []}
+                        onEdit={(taskIndex) => {
+                          setSelectedProjectId(project.id);
+                          setEditingTaskIndex(taskIndex);
+                          setActiveSection('projects');
+                        }}
+                        onDelete={(taskIndex) => handleDeleteTask(project.id, taskIndex)}
+                      />
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
