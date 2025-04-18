@@ -16,7 +16,7 @@ import './DashboardResponsive.css';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, RadialLinearScale, PointElement, LineElement);
 
-const Dashboard = ({ projects, tasks }) => {
+const Dashboard = ({ projects, tasks, onCardClick }) => {
   // Calculate project statistics
   const totalProjects = projects.length;
   const completedProjects = projects.filter((p) => p.status === 'Completed').length;
@@ -101,13 +101,21 @@ const Dashboard = ({ projects, tasks }) => {
     .sort((a, b) => new Date(a.endDate) - new Date(b.endDate))
     .slice(0, 5);
 
+  // Helper: Calculate progress for each project
+  function getProjectProgress(project) {
+    const projectTasks = tasks[project.id] || [];
+    if (projectTasks.length === 0) return 0;
+    const completed = projectTasks.filter(t => t.status === 'Completed').length;
+    return Math.round((completed / projectTasks.length) * 100);
+  }
+
   return (
     <div className="card"> {/* Wrap in a card */}
       <div className="card-body"> {/* Card body */}
         <h5 className="card-title mb-4 dashboard-card-title">📊 Dashboard</h5> {/* Card title */}
         <div className="row mb-3"> {/* Bootstrap Card Row for Project Stats */}
           <div className="col-md-3">
-            <div className="card text-center border-primary">
+            <div className="card text-center border-primary clickable-card" onClick={() => onCardClick && onCardClick('all-projects')} style={{ cursor: 'pointer' }}>
               <div className="card-body">
                 <h6 className="card-title dashboard-card-title">🗂️ Total Projects</h6>
                 <p className="display-6 mb-0 dashboard-stat-number">{totalProjects}</p>
@@ -115,7 +123,7 @@ const Dashboard = ({ projects, tasks }) => {
             </div>
           </div>
           <div className="col-md-3">
-            <div className="card text-center border-success">
+            <div className="card text-center border-success clickable-card" onClick={() => onCardClick && onCardClick('completed-projects')} style={{ cursor: 'pointer' }}>
               <div className="card-body">
                 <h6 className="card-title dashboard-card-title">✅ Completed</h6>
                 <p className="display-6 mb-0 text-success dashboard-stat-number">{completedProjects}</p>
@@ -123,7 +131,7 @@ const Dashboard = ({ projects, tasks }) => {
             </div>
           </div>
           <div className="col-md-3">
-            <div className="card text-center border-info">
+            <div className="card text-center border-info clickable-card" onClick={() => onCardClick && onCardClick('inprogress-projects')} style={{ cursor: 'pointer' }}>
               <div className="card-body">
                 <h6 className="card-title dashboard-card-title">🔄 In Progress</h6>
                 <p className="display-6 mb-0 text-info dashboard-stat-number">{inProgressProjects}</p>
@@ -131,7 +139,7 @@ const Dashboard = ({ projects, tasks }) => {
             </div>
           </div>
           <div className="col-md-3">
-            <div className="card text-center border-warning">
+            <div className="card text-center border-warning clickable-card" onClick={() => onCardClick && onCardClick('pending-projects')} style={{ cursor: 'pointer' }}>
               <div className="card-body">
                 <h6 className="card-title dashboard-card-title">⏳ Pending</h6>
                 <p className="display-6 mb-0 text-warning dashboard-stat-number">{pendingProjects}</p>
@@ -179,16 +187,33 @@ const Dashboard = ({ projects, tasks }) => {
                   <ul className="list-group list-group-flush">
                     {upcomingProjects.map((p) => {
                       const isOverdue = new Date(p.endDate) < today;
+                      const progress = getProjectProgress(p);
                       return (
                         <li
                           key={p.id || p.title}
-                          className={`list-group-item d-flex justify-content-between align-items-center ${isOverdue ? 'text-danger fw-bold' : ''}`}
+                          className={`list-group-item d-flex flex-column flex-md-row justify-content-between align-items-md-center ${isOverdue ? 'text-danger fw-bold' : ''}`}
                         >
-                          <span>{p.title || 'Untitled'}</span>
-                          <span>
-                            {p.endDate ? new Date(p.endDate).toLocaleDateString() : 'No end date'}
-                            {isOverdue && <span className="ms-2 badge bg-danger">Overdue</span>}
-                          </span>
+                          <div className="d-flex flex-column flex-md-row align-items-md-center gap-2">
+                            <span>{p.title || 'Untitled'}</span>
+                            <span>
+                              {p.endDate ? new Date(p.endDate).toLocaleDateString() : 'No end date'}
+                              {isOverdue && <span className="ms-2 badge bg-danger">Overdue</span>}
+                            </span>
+                          </div>
+                          <div className="w-100 w-md-50 mt-2 mt-md-0">
+                            <div className="progress" style={{ height: '18px' }}>
+                              <div
+                                className={`progress-bar${progress === 100 ? ' bg-success' : progress >= 50 ? ' bg-info' : ' bg-warning'}`}
+                                role="progressbar"
+                                style={{ width: `${progress}%` }}
+                                aria-valuenow={progress}
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                              >
+                                {progress}%
+                              </div>
+                            </div>
+                          </div>
                         </li>
                       );
                     })}

@@ -123,6 +123,7 @@ function App() {
   const [activeSection, setActiveSection] = useState('dashboard');
   const width = useWindowWidth();
   const isDesktop = width >= 992;
+  const [projectFilter, setProjectFilter] = useState('All');
 
   const showNotification = (message, type = 'error') => {
     setNotification({ message, type });
@@ -212,6 +213,15 @@ function App() {
     setEditingTaskIndex(null);
   };
 
+  // Handle dashboard card clicks
+  const handleDashboardCardClick = (type) => {
+    setActiveSection('projects');
+    if (type === 'all-projects') setProjectFilter('All');
+    else if (type === 'completed-projects') setProjectFilter('Completed');
+    else if (type === 'inprogress-projects') setProjectFilter('In Progress');
+    else if (type === 'pending-projects') setProjectFilter('Pending');
+  };
+
   return (
     <div className="d-flex">
       {isDesktop ? (
@@ -232,7 +242,7 @@ function App() {
             <h1 className="mb-4" tabIndex={0}>Project Management</h1>
             <div className="row mb-4">
               <div className="col-md-12">
-                <Dashboard projects={projects} tasks={tasks} />
+                <Dashboard projects={projects} tasks={tasks} onCardClick={handleDashboardCardClick} />
               </div>
             </div>
           </>
@@ -251,6 +261,7 @@ function App() {
                 onDelete={handleDeleteProject}
                 onTasks={handleProjectSelection}
                 onStatusChange={handleStatusChange}
+                filterStatus={projectFilter}
               />
             </div>
             <div className="col-md-6">
