@@ -99,18 +99,19 @@ function App() {
         />
       )}
       <h1 className="mb-4">Project Management</h1> {/* Added margin-bottom */}
-      <div className="row mb-4"> {/* Added row for Settings and Dashboard */}
-        <div className="col-md-6">
-          <Settings onResetData={handleResetData} />
-        </div>
-        <div className="col-md-6">
+      <div className="row mb-4"> {/* Dashboard row moved to top */}
+        <div className="col-md-12">
           <Dashboard projects={projects} tasks={tasks} />
         </div>
       </div>
-      
-      <div className="row"> {/* Added row for Project Form and List */}
+      <div className="row mb-4"> {/* Settings row below Dashboard */}
         <div className="col-md-6">
-          <h2 className="mb-3">Projects</h2> {/* Added margin-bottom */}
+          <Settings onResetData={handleResetData} />
+        </div>
+      </div>
+      <div className="row"> {/* Project Form and List */}
+        <div className="col-md-6">
+          <h2 className="mb-3">Projects</h2>
           <ProjectForm
             onSave={handleSaveProject}
             project={editingIndex !== null ? projects[editingIndex] : null}
@@ -121,11 +122,11 @@ function App() {
             onDelete={handleDeleteProject}
           />
         </div>
-        <div className="col-md-6"> {/* Added column for Tasks section */}
-          {projects.length > 0 && <h2 className="mb-3">Tasks</h2>} {/* Conditionally render Tasks header */}
+        <div className="col-md-6">
+          {projects.length > 0 && <h2 className="mb-3">Tasks</h2>}
           {projects.map((project, projectIndex) => (
-            <div key={projectIndex} className="mb-4"> {/* Added margin-bottom to task sections */}
-              <h3 className="mb-3">Tasks for {project.title}</h3> {/* Changed to h3 and added margin */}
+            <div key={projectIndex} className="mb-4">
+              <h3 className="mb-3">Tasks for {project.title}</h3>
               <TaskForm
                 onSave={(task) => handleSaveTask(projectIndex, task)}
                 task={editingTaskIndex !== null ? tasks[projectIndex]?.[editingTaskIndex] : null}
