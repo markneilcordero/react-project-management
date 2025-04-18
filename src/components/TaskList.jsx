@@ -5,6 +5,8 @@ const TaskList = ({ tasks, onEdit, onDelete }) => {
   const [filterPriority, setFilterPriority] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteIndex, setDeleteIndex] = useState(null);
 
   const filteredTasks = tasks.filter((task) => {
     const matchesSearch =
@@ -61,7 +63,7 @@ const TaskList = ({ tasks, onEdit, onDelete }) => {
                 </div>
                 <div className="d-flex flex-column flex-md-row">
                   <button onClick={() => onEdit(index + (currentPage-1)*pageSize)} className="btn btn-sm btn-outline-warning mb-2 mb-md-0 me-md-2">Edit</button>
-                  <button onClick={() => onDelete(index + (currentPage-1)*pageSize)} className="btn btn-sm btn-outline-danger">Delete</button>
+                  <button onClick={() => { setShowDeleteModal(true); setDeleteIndex(index + (currentPage-1)*pageSize); }} className="btn btn-sm btn-outline-danger">Delete</button>
                 </div>
               </li>
             ))}
@@ -84,6 +86,29 @@ const TaskList = ({ tasks, onEdit, onDelete }) => {
               </ul>
             </nav>
           )}
+        </>
+      )}
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <>
+          <div className="modal fade show" style={{display:'block'}} tabIndex="-1" role="dialog" aria-modal="true">
+            <div className="modal-dialog modal-dialog-centered" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Confirm Delete</h5>
+                  <button type="button" className="btn-close" aria-label="Close" onClick={() => setShowDeleteModal(false)}></button>
+                </div>
+                <div className="modal-body">
+                  <p>Are you sure you want to delete this task?</p>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={() => setShowDeleteModal(false)}>Cancel</button>
+                  <button type="button" className="btn btn-danger" onClick={() => { onDelete(deleteIndex); setShowDeleteModal(false); }}>Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="modal-backdrop fade show" style={{ position: 'fixed' }}></div>
         </>
       )}
     </div>
