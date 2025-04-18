@@ -369,7 +369,7 @@ function App() {
                         onEdit={(taskIndex) => {
                           setSelectedProjectId(project.id);
                           setEditingTaskIndex(taskIndex);
-                          setActiveSection('projects');
+                          // Removed setActiveSection('projects') to prevent navigation
                         }}
                         onDelete={(taskIndex) => handleDeleteTask(project.id, taskIndex)}
                       />
@@ -410,6 +410,28 @@ function App() {
                     </div>
                   )}
                   <TaskForm onSave={handleModalSaveTask} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Modal for Edit Task */}
+        {editingTaskIndex !== null && selectedProjectId && (
+          <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true">
+            <div className="modal-dialog modal-dialog-centered" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Edit Task</h5>
+                  <button type="button" className="btn-close" aria-label="Close" onClick={() => setEditingTaskIndex(null)}></button>
+                </div>
+                <div className="modal-body">
+                  <TaskForm
+                    onSave={(task) => {
+                      handleSaveTask(selectedProjectId, task);
+                      setEditingTaskIndex(null);
+                    }}
+                    task={tasks[selectedProjectId]?.[editingTaskIndex]}
+                  />
                 </div>
               </div>
             </div>
