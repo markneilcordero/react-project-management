@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import './App.css';
+// Remove App.css import if Bootstrap handles most styling
+// import './App.css';
 import ProjectForm from './components/ProjectForm';
 import ProjectList from './components/ProjectList';
 import TaskForm from './components/TaskForm';
@@ -89,7 +90,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="container mt-4"> {/* Added Bootstrap container and margin-top */}
       {notification && (
         <Notification
           message={notification.message}
@@ -97,32 +98,47 @@ function App() {
           onClose={() => setNotification(null)}
         />
       )}
-      <h1>Project Management</h1>
-      <Settings onResetData={handleResetData} />
-      <Dashboard projects={projects} tasks={tasks} />
-      <ProjectForm
-        onSave={handleSaveProject}
-        project={editingIndex !== null ? projects[editingIndex] : null}
-      />
-      <ProjectList
-        projects={projects}
-        onEdit={handleEditProject}
-        onDelete={handleDeleteProject}
-      />
-      {projects.map((project, projectIndex) => (
-        <div key={projectIndex}>
-          <h2>Tasks for {project.title}</h2>
-          <TaskForm
-            onSave={(task) => handleSaveTask(projectIndex, task)}
-            task={editingTaskIndex !== null ? tasks[projectIndex]?.[editingTaskIndex] : null}
+      <h1 className="mb-4">Project Management</h1> {/* Added margin-bottom */}
+      <div className="row mb-4"> {/* Added row for Settings and Dashboard */}
+        <div className="col-md-6">
+          <Settings onResetData={handleResetData} />
+        </div>
+        <div className="col-md-6">
+          <Dashboard projects={projects} tasks={tasks} />
+        </div>
+      </div>
+      
+      <div className="row"> {/* Added row for Project Form and List */}
+        <div className="col-md-6">
+          <h2 className="mb-3">Projects</h2> {/* Added margin-bottom */}
+          <ProjectForm
+            onSave={handleSaveProject}
+            project={editingIndex !== null ? projects[editingIndex] : null}
           />
-          <TaskList
-            tasks={tasks[projectIndex] || []}
-            onEdit={(taskIndex) => handleEditTask(projectIndex, taskIndex)}
-            onDelete={(taskIndex) => handleDeleteTask(projectIndex, taskIndex)}
+          <ProjectList
+            projects={projects}
+            onEdit={handleEditProject}
+            onDelete={handleDeleteProject}
           />
         </div>
-      ))}
+        <div className="col-md-6"> {/* Added column for Tasks section */}
+          {projects.length > 0 && <h2 className="mb-3">Tasks</h2>} {/* Conditionally render Tasks header */}
+          {projects.map((project, projectIndex) => (
+            <div key={projectIndex} className="mb-4"> {/* Added margin-bottom to task sections */}
+              <h3 className="mb-3">Tasks for {project.title}</h3> {/* Changed to h3 and added margin */}
+              <TaskForm
+                onSave={(task) => handleSaveTask(projectIndex, task)}
+                task={editingTaskIndex !== null ? tasks[projectIndex]?.[editingTaskIndex] : null}
+              />
+              <TaskList
+                tasks={tasks[projectIndex] || []}
+                onEdit={(taskIndex) => handleEditTask(projectIndex, taskIndex)}
+                onDelete={(taskIndex) => handleDeleteTask(projectIndex, taskIndex)}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

@@ -46,22 +46,26 @@ const Dashboard = ({ projects, tasks }) => {
   };
 
   return (
-    <div>
-      <h1>Dashboard</h1>
-      <div>
-        <h2>Project Overview</h2>
-        <p>Total Projects: {totalProjects}</p>
-        <p>Completed: {completedProjects}</p>
-        <p>Ongoing: {ongoingProjects}</p>
-        <p>Pending: {pendingProjects}</p>
-        <Pie data={projectData} />
-      </div>
-      <div>
-        <h2>Task Overview</h2>
-        <p>Total Tasks: {totalTasks}</p>
-        <p>Completed: {completedTasks}</p>
-        <p>Pending: {pendingTasks}</p>
-        <Bar data={taskData} />
+    <div className="card"> {/* Wrap in a card */}
+      <div className="card-body"> {/* Card body */}
+        <h5 className="card-title mb-4">Dashboard</h5> {/* Card title */}
+        <div className="row"> {/* Use row for layout */}
+          <div className="col-md-6 mb-4 mb-md-0"> {/* Project Overview Column */}
+            <h6>Project Overview</h6> {/* Use h6 */}
+            <p className="card-text">Total Projects: {totalProjects}</p> {/* Use card-text */}
+            <p className="card-text">Completed: {completedProjects}</p>
+            <p className="card-text">Ongoing: {ongoingProjects}</p>
+            <p className="card-text">Pending: {pendingProjects}</p>
+            {totalProjects > 0 ? <Pie data={projectData} options={{ responsive: true }} /> : <p className='text-muted'>No project data</p>} {/* Responsive chart or message */}
+          </div>
+          <div className="col-md-6"> {/* Task Overview Column */}
+            <h6>Task Overview</h6> {/* Use h6 */}
+            <p className="card-text">Total Tasks: {totalTasks}</p> {/* Use card-text */}
+            <p className="card-text">Completed: {completedTasks}</p>
+            <p className="card-text">Pending: {pendingTasks}</p>
+            {totalTasks > 0 ? <Bar data={taskData} options={{ responsive: true }} /> : <p className='text-muted'>No task data</p>} {/* Responsive chart or message */}
+          </div>
+        </div>
       </div>
     </div>
   );
