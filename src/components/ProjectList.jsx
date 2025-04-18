@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './ProjectResponsive.css';
 
 const ProjectList = ({ projects, onEdit, onDelete, onTasks, onStatusChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,14 +18,14 @@ const ProjectList = ({ projects, onEdit, onDelete, onTasks, onStatusChange }) =>
   const getOriginalIndex = (project) => projects.findIndex(p => p === project);
 
   return (
-    <div className="card mt-4"> {/* Wrap in a card and add margin top */}
-      <div className="card-body"> {/* Card body */}
-        <h5 className="card-title mb-3">Project List</h5> {/* Card title */}
-        <div className="row mb-3"> {/* Filter/Search row */}
-          <div className="col-md-6 mb-2 mb-md-0"> {/* Added bottom margin for small screens */}
+    <div className="card mt-4" style={{maxWidth: 1100, margin: '0 auto'}}> {/* Centered and wider on desktop */}
+      <div className="card-body">
+        <h5 className="card-title mb-4 fs-3">Project List</h5>
+        <div className="row mb-4 g-3 flex-md-row">
+          <div className="col-md-6">
             <input
               type="text"
-              className="form-control form-control-sm" // Added Bootstrap class (small)
+              className="form-control form-control-lg"
               placeholder="Search projects..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -32,7 +33,7 @@ const ProjectList = ({ projects, onEdit, onDelete, onTasks, onStatusChange }) =>
           </div>
           <div className="col-md-6">
             <select
-              className="form-select form-select-sm" // Added Bootstrap class (small)
+              className="form-select form-select-lg"
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
             >
@@ -45,32 +46,34 @@ const ProjectList = ({ projects, onEdit, onDelete, onTasks, onStatusChange }) =>
           </div>
         </div>
         {filteredProjects.length === 0 ? (
-          <p className="text-muted">No projects match the current filter.</p> /* Added text-muted */
+          <p className="text-muted fs-5">No projects match the current filter.</p>
         ) : (
-          <ul className="list-group"> {/* Use list-group */}
+          <ul className="list-group">
             {filteredProjects.map((project) => {
               const originalIndex = getOriginalIndex(project);
               return (
-                <li key={originalIndex} className="list-group-item d-flex justify-content-between align-items-center"> {/* list-group-item and flex utilities */}
-                  <div>
-                    <h6 className="mb-1">{project.title}</h6> {/* Use h6 for title */}
-                    <p className="mb-1 small">{project.description}</p> {/* Made description smaller */}
-                    <small className="text-muted">Status: {project.status || 'Not Set'} | Start: {project.startDate} | End: {project.endDate}</small> {/* Added default status and text-muted */}
-                  </div>
-                  <div className="d-flex align-items-center">
-                    <select
-                      className="form-select form-select-sm me-2"
-                      style={{ width: 'auto' }}
-                      value={project.status || 'Pending'}
-                      onChange={e => onStatusChange(originalIndex, e.target.value)}
-                    >
-                      <option value="Pending">Pending</option>
-                      <option value="In Progress">In Progress</option>
-                      <option value="Completed">Completed</option>
-                    </select>
-                    <button onClick={() => onEdit(originalIndex)} className="btn btn-sm btn-outline-warning me-2">Edit</button> {/* Bootstrap button classes */}
-                    <button onClick={() => onDelete(originalIndex)} className="btn btn-sm btn-outline-danger me-2">Delete</button> {/* Bootstrap button classes */}
-                    <button onClick={() => onTasks(project.id)} className="btn btn-sm btn-outline-primary">Tasks</button> {/* New Tasks button */}
+                <li key={originalIndex} className="list-group-item py-4">
+                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-4">
+                    <div className="flex-grow-1">
+                      <h6 className="mb-2 fs-5">{project.title}</h6>
+                      <p className="mb-2 fs-6">{project.description}</p>
+                      <small className="text-muted">Status: {project.status || 'Not Set'} | Start: {project.startDate} | End: {project.endDate}</small>
+                    </div>
+                    <div className="d-flex flex-wrap gap-3 align-items-center mt-3 mt-md-0 justify-content-md-end">
+                      <select
+                        className="form-select form-select-sm me-3"
+                        style={{ width: 'auto', minWidth: 130 }}
+                        value={project.status || 'Pending'}
+                        onChange={e => onStatusChange(originalIndex, e.target.value)}
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                      <button onClick={() => onEdit(originalIndex)} className="btn btn-sm btn-outline-warning px-4">Edit</button> {/* Bootstrap button classes */}
+                      <button onClick={() => onDelete(originalIndex)} className="btn btn-sm btn-outline-danger px-4">Delete</button> {/* Bootstrap button classes */}
+                      <button onClick={() => onTasks(project.id)} className="btn btn-sm btn-outline-primary px-4">Tasks</button> {/* New Tasks button */}
+                    </div>
                   </div>
                 </li>
               );

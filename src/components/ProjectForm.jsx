@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'; // Added useEffect
+import './ProjectResponsive.css';
 
 const ProjectForm = ({ onSave, project }) => {
   const [title, setTitle] = useState('');
@@ -33,53 +34,62 @@ const ProjectForm = ({ onSave, project }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-4"> {/* Added margin-bottom */}
-      <div className="mb-3"> {/* Added margin-bottom */}
-        <label htmlFor="projectTitle" className="form-label">Title:</label> {/* Added Bootstrap class */}
-        <input
-          type="text"
-          id="projectTitle" // Added id for label association
-          className="form-control" // Added Bootstrap class
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
+    <form onSubmit={handleSubmit} className="mb-4 px-2 px-md-4 px-lg-5 px-xl-6" style={{maxWidth: 900, margin: '0 auto'}}> {/* Centered and wider on desktop */}
+      <div className="row g-4"> {/* More gap on desktop */}
+        <div className="col-12 col-md-6 col-lg-6">
+          <div className="mb-3">
+            <label htmlFor="projectTitle" className="form-label">Title:</label>
+            <input
+              type="text"
+              id="projectTitle"
+              className="form-control"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </div>
+        </div>
+        <div className="col-12 col-md-6 col-lg-6">
+          <div className="mb-3">
+            <label htmlFor="projectDescription" className="form-label">Description:</label>
+            <textarea
+              id="projectDescription"
+              className="form-control"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+              rows={3}
+            ></textarea>
+          </div>
+        </div>
       </div>
-      <div className="mb-3"> {/* Added margin-bottom */}
-        <label htmlFor="projectDescription" className="form-label">Description:</label> {/* Added Bootstrap class */}
-        <textarea
-          id="projectDescription" // Added id for label association
-          className="form-control" // Added Bootstrap class
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        ></textarea>
-      </div>
-      <div className="row mb-3"> {/* Use row for dates */}
-        <div className="col"> {/* Column for start date */}
-          <label htmlFor="projectStartDate" className="form-label">Start Date:</label> {/* Added Bootstrap class */}
+      <div className="row mb-3 g-3 flex-md-row">
+        <div className="col-md-6 col-lg-3">
+          <label htmlFor="projectStartDate" className="form-label">Start Date:</label>
           <input
             type="date"
-            id="projectStartDate" // Added id for label association
-            className="form-control" // Added Bootstrap class
+            id="projectStartDate"
+            className="form-control"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             required
           />
         </div>
-        <div className="col"> {/* Column for end date */}
-          <label htmlFor="projectEndDate" className="form-label">End Date:</label> {/* Added Bootstrap class */}
+        <div className="col-md-6 col-lg-3">
+          <label htmlFor="projectEndDate" className="form-label">End Date:</label>
           <input
             type="date"
-            id="projectEndDate" // Added id for label association
-            className="form-control" // Added Bootstrap class
+            id="projectEndDate"
+            className="form-control"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
             required
           />
         </div>
       </div>
-      <button type="submit" className="btn btn-primary">{project ? 'Update Project' : 'Add Project'}</button> {/* Added Bootstrap classes and dynamic text */}
+      <div className="d-grid d-md-flex justify-content-md-end mt-4">
+        <button type="submit" className="btn btn-primary px-5 py-2 fs-5">{project ? 'Update Project' : 'Add Project'}</button>
+      </div>
     </form>
   );
 };
