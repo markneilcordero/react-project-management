@@ -162,15 +162,15 @@ const Dashboard = ({ projects, tasks }) => {
         <div className="row">
           <div className="col-md-6 mb-4 mb-md-0">
             <h6>Project Overview</h6>
-            {totalProjects > 0 ? <Doughnut data={projectData} options={{ responsive: true }} /> : <p className='text-muted'>No project data</p>}
+            {totalProjects > 0 ? <Doughnut data={projectData} options={{ responsive: true, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Project Status Distribution' } } }} /> : <p className='text-muted'>No project data</p>}
           </div>
           <div className="col-md-6 mb-4 mb-md-0">
             <h6>Projects List</h6>
-            {totalProjects > 0 ? <Doughnut data={projectNamesData} options={{ responsive: true, plugins: { legend: { position: 'right' } } }} /> : <p className='text-muted'>No project names</p>}
+            {totalProjects > 0 ? <Doughnut data={projectNamesData} options={{ responsive: true, plugins: { legend: { position: 'right' }, title: { display: true, text: 'Projects' } } }} /> : <p className='text-muted'>No project names</p>}
           </div>
           <div className="col-md-6">
             <h6>Task Overview</h6>
-            {totalTasks > 0 ? <Doughnut data={taskStatusData} options={{ responsive: true }} /> : <p className='text-muted'>No task data</p>}
+            {totalTasks > 0 ? <Doughnut data={taskStatusData} options={{ responsive: true, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Task Status Distribution' } } }} /> : <p className='text-muted'>No task data</p>}
           </div>
           <div className="col-md-6">
             <h6>Task List</h6>
@@ -179,8 +179,12 @@ const Dashboard = ({ projects, tasks }) => {
                 data={taskListBarData}
                 options={{
                   responsive: true,
-                  plugins: { legend: { position: 'top' } },
-                  scales: { x: { stacked: true }, y: { stacked: true } },
+                  plugins: {
+                    legend: { position: 'top' },
+                    title: { display: true, text: 'Tasks per Project by Status' },
+                    tooltip: { enabled: true }
+                  },
+                  scales: { x: { stacked: true, title: { display: true, text: 'Projects' } }, y: { stacked: true, title: { display: true, text: 'Number of Tasks' } } },
                 }}
               />
             ) : (
