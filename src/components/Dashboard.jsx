@@ -160,19 +160,19 @@ const Dashboard = ({ projects, tasks }) => {
         {/* End Bootstrap Card Row for Task Stats */}
         {/* Removed duplicate stat lines, keep only charts and headers */}
         <div className="row">
-          <div className="col-md-6 mb-4 mb-md-0">
+          <div className="col-12 col-md-6 mb-4 mb-md-0">
             <h6>Project Overview</h6>
             {totalProjects > 0 ? <Doughnut data={projectData} options={{ responsive: true, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Project Status Distribution' } } }} /> : <p className='text-muted'>No project data</p>}
           </div>
-          <div className="col-md-6 mb-4 mb-md-0">
+          <div className="col-12 col-md-6 mb-4 mb-md-0">
             <h6>Projects List</h6>
             {totalProjects > 0 ? <Doughnut data={projectNamesData} options={{ responsive: true, plugins: { legend: { position: 'right' }, title: { display: true, text: 'Projects' } } }} /> : <p className='text-muted'>No project names</p>}
           </div>
-          <div className="col-md-6">
+          <div className="col-12 col-md-6 mb-4 mb-md-0">
             <h6>Task Overview</h6>
             {totalTasks > 0 ? <Doughnut data={taskStatusData} options={{ responsive: true, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Task Status Distribution' } } }} /> : <p className='text-muted'>No task data</p>}
           </div>
-          <div className="col-md-6">
+          <div className="col-12 col-md-6 mb-4 mb-md-0">
             <h6>Task List</h6>
             {totalTasks > 0 ? (
               <Bar

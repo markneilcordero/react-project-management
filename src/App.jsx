@@ -9,15 +9,65 @@ import Dashboard from './components/Dashboard';
 import Notification from './components/Notification';
 import Settings from './components/Settings';
 
+const sampleProjects = [
+  { title: 'Website Redesign', description: 'Update the company website for a modern look.', startDate: '2025-04-01', endDate: '2025-05-01', status: 'In Progress' },
+  { title: 'Mobile App Launch', description: 'Release the new mobile app to the app stores.', startDate: '2025-03-15', endDate: '2025-04-30', status: 'Pending' },
+  { title: 'Marketing Campaign', description: 'Run a spring marketing campaign.', startDate: '2025-04-10', endDate: '2025-05-10', status: 'Completed' },
+  { title: 'Database Migration', description: 'Migrate database to new server.', startDate: '2025-04-05', endDate: '2025-04-20', status: 'In Progress' },
+  { title: 'Team Training', description: 'Conduct training for new tools.', startDate: '2025-04-12', endDate: '2025-04-18', status: 'Completed' },
+  { title: 'API Integration', description: 'Integrate third-party APIs.', startDate: '2025-04-08', endDate: '2025-04-25', status: 'Pending' },
+  { title: 'Security Audit', description: 'Perform a security audit.', startDate: '2025-04-02', endDate: '2025-04-15', status: 'Completed' },
+  { title: 'Content Creation', description: 'Create new blog and social content.', startDate: '2025-04-03', endDate: '2025-04-30', status: 'In Progress' },
+  { title: 'Customer Survey', description: 'Survey customers for feedback.', startDate: '2025-04-07', endDate: '2025-04-21', status: 'Pending' },
+  { title: 'Bug Fixes', description: 'Fix critical bugs in production.', startDate: '2025-04-01', endDate: '2025-04-10', status: 'Completed' },
+];
+const sampleTasks = {
+  0: [
+    { title: 'Design mockups', description: 'Create new homepage mockups.', priority: 'High', dueDate: '2025-04-05', status: 'Completed' },
+    { title: 'Review content', description: 'Update website text.', priority: 'Medium', dueDate: '2025-04-10', status: 'In Progress' },
+  ],
+  1: [
+    { title: 'Beta testing', description: 'Test app with beta users.', priority: 'High', dueDate: '2025-04-20', status: 'Pending' },
+    { title: 'App store assets', description: 'Prepare screenshots and descriptions.', priority: 'Medium', dueDate: '2025-04-18', status: 'Pending' },
+  ],
+  2: [
+    { title: 'Ad design', description: 'Design banners for campaign.', priority: 'Low', dueDate: '2025-04-15', status: 'Completed' },
+  ],
+  3: [
+    { title: 'Backup data', description: 'Backup all databases.', priority: 'High', dueDate: '2025-04-06', status: 'Completed' },
+    { title: 'Migrate tables', description: 'Move tables to new server.', priority: 'High', dueDate: '2025-04-15', status: 'In Progress' },
+  ],
+  4: [
+    { title: 'Schedule sessions', description: 'Book training rooms.', priority: 'Low', dueDate: '2025-04-13', status: 'Completed' },
+  ],
+  5: [
+    { title: 'API research', description: 'Evaluate API options.', priority: 'Medium', dueDate: '2025-04-12', status: 'Pending' },
+  ],
+  6: [
+    { title: 'Vulnerability scan', description: 'Run security scans.', priority: 'High', dueDate: '2025-04-10', status: 'Completed' },
+  ],
+  7: [
+    { title: 'Write articles', description: 'Draft 3 new blog posts.', priority: 'Medium', dueDate: '2025-04-20', status: 'In Progress' },
+  ],
+  8: [
+    { title: 'Draft questions', description: 'Prepare survey questions.', priority: 'Low', dueDate: '2025-04-09', status: 'Pending' },
+  ],
+  9: [
+    { title: 'Fix login bug', description: 'Resolve login issue for users.', priority: 'High', dueDate: '2025-04-03', status: 'Completed' },
+  ],
+};
+
 function App() {
   const [projects, setProjects] = useState(() => {
     const savedProjects = localStorage.getItem('projects');
-    return savedProjects ? JSON.parse(savedProjects) : [];
+    if (savedProjects) return JSON.parse(savedProjects);
+    return sampleProjects;
   });
   const [editingIndex, setEditingIndex] = useState(null);
   const [tasks, setTasks] = useState(() => {
     const savedTasks = localStorage.getItem('tasks');
-    return savedTasks ? JSON.parse(savedTasks) : {};
+    if (savedTasks) return JSON.parse(savedTasks);
+    return sampleTasks;
   });
   const [editingTaskIndex, setEditingTaskIndex] = useState(null);
   const [notification, setNotification] = useState(null);
@@ -30,6 +80,16 @@ function App() {
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
+
+  // Add data to local storage on first load if not present
+  useEffect(() => {
+    if (!localStorage.getItem('projects')) {
+      localStorage.setItem('projects', JSON.stringify(projects));
+    }
+    if (!localStorage.getItem('tasks')) {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+  }, []);
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
