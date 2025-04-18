@@ -21,6 +21,7 @@ function App() {
   });
   const [editingTaskIndex, setEditingTaskIndex] = useState(null);
   const [notification, setNotification] = useState(null);
+  const [selectedProjectIndex, setSelectedProjectIndex] = useState(null);
 
   useEffect(() => {
     localStorage.setItem('projects', JSON.stringify(projects));
@@ -120,24 +121,25 @@ function App() {
             projects={projects}
             onEdit={handleEditProject}
             onDelete={handleDeleteProject}
+            onTasks={setSelectedProjectIndex}
           />
         </div>
         <div className="col-md-6">
-          {projects.length > 0 && <h2 className="mb-3">Tasks</h2>}
-          {projects.map((project, projectIndex) => (
-            <div key={projectIndex} className="mb-4">
-              <h3 className="mb-3">Tasks for {project.title}</h3>
+          {selectedProjectIndex !== null && projects[selectedProjectIndex] && (
+            <div className="mb-4">
+              <h2 className="mb-3">Tasks for {projects[selectedProjectIndex].title}</h2>
               <TaskForm
-                onSave={(task) => handleSaveTask(projectIndex, task)}
-                task={editingTaskIndex !== null ? tasks[projectIndex]?.[editingTaskIndex] : null}
+                onSave={(task) => handleSaveTask(selectedProjectIndex, task)}
+                task={editingTaskIndex !== null ? tasks[selectedProjectIndex]?.[editingTaskIndex] : null}
               />
               <TaskList
-                tasks={tasks[projectIndex] || []}
-                onEdit={(taskIndex) => handleEditTask(projectIndex, taskIndex)}
-                onDelete={(taskIndex) => handleDeleteTask(projectIndex, taskIndex)}
+                tasks={tasks[selectedProjectIndex] || []}
+                onEdit={(taskIndex) => handleEditTask(selectedProjectIndex, taskIndex)}
+                onDelete={(taskIndex) => handleDeleteTask(selectedProjectIndex, taskIndex)}
               />
+              <button className="btn btn-secondary mt-2" onClick={() => setSelectedProjectIndex(null)}>Close Tasks</button>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>

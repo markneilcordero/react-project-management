@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const ProjectList = ({ projects, onEdit, onDelete }) => {
+const ProjectList = ({ projects, onEdit, onDelete, onTasks }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
 
@@ -59,7 +59,8 @@ const ProjectList = ({ projects, onEdit, onDelete }) => {
                   <div>
                     {/* Pass the original index to handlers */}
                     <button onClick={() => onEdit(originalIndex)} className="btn btn-sm btn-outline-warning me-2">Edit</button> {/* Bootstrap button classes */}
-                    <button onClick={() => onDelete(originalIndex)} className="btn btn-sm btn-outline-danger">Delete</button> {/* Bootstrap button classes */}
+                    <button onClick={() => onDelete(originalIndex)} className="btn btn-sm btn-outline-danger me-2">Delete</button> {/* Bootstrap button classes */}
+                    <button onClick={() => onTasks(originalIndex)} className="btn btn-sm btn-outline-primary">Tasks</button> {/* New Tasks button */}
                   </div>
                 </li>
               );
