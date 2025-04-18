@@ -49,21 +49,77 @@ const Dashboard = ({ projects, tasks }) => {
     <div className="card"> {/* Wrap in a card */}
       <div className="card-body"> {/* Card body */}
         <h5 className="card-title mb-4">Dashboard</h5> {/* Card title */}
-        <div className="row"> {/* Use row for layout */}
-          <div className="col-md-6 mb-4 mb-md-0"> {/* Project Overview Column */}
-            <h6>Project Overview</h6> {/* Use h6 */}
-            <p className="card-text">Total Projects: {totalProjects}</p> {/* Use card-text */}
-            <p className="card-text">Completed: {completedProjects}</p>
-            <p className="card-text">Ongoing: {ongoingProjects}</p>
-            <p className="card-text">Pending: {pendingProjects}</p>
-            {totalProjects > 0 ? <Pie data={projectData} options={{ responsive: true }} /> : <p className='text-muted'>No project data</p>} {/* Responsive chart or message */}
+        <div className="row mb-3"> {/* Bootstrap Card Row for Project Stats */}
+          <div className="col-md-3">
+            <div className="card text-center border-primary">
+              <div className="card-body">
+                <h6 className="card-title">Total Projects</h6>
+                <p className="display-6 mb-0">{totalProjects}</p>
+              </div>
+            </div>
           </div>
-          <div className="col-md-6"> {/* Task Overview Column */}
-            <h6>Task Overview</h6> {/* Use h6 */}
-            <p className="card-text">Total Tasks: {totalTasks}</p> {/* Use card-text */}
-            <p className="card-text">Completed: {completedTasks}</p>
-            <p className="card-text">Pending: {pendingTasks}</p>
-            {totalTasks > 0 ? <Bar data={taskData} options={{ responsive: true }} /> : <p className='text-muted'>No task data</p>} {/* Responsive chart or message */}
+          <div className="col-md-3">
+            <div className="card text-center border-success">
+              <div className="card-body">
+                <h6 className="card-title">Completed</h6>
+                <p className="display-6 mb-0 text-success">{completedProjects}</p>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-3">
+            <div className="card text-center border-info">
+              <div className="card-body">
+                <h6 className="card-title">Ongoing</h6>
+                <p className="display-6 mb-0 text-info">{ongoingProjects}</p>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-3">
+            <div className="card text-center border-warning">
+              <div className="card-body">
+                <h6 className="card-title">Pending</h6>
+                <p className="display-6 mb-0 text-warning">{pendingProjects}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* End Bootstrap Card Row for Project Stats */}
+        <div className="row mb-3"> {/* Bootstrap Card Row for Task Stats */}
+          <div className="col-md-4">
+            <div className="card text-center border-primary">
+              <div className="card-body">
+                <h6 className="card-title">Total Tasks</h6>
+                <p className="display-6 mb-0">{totalTasks}</p>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-4">
+            <div className="card text-center border-success">
+              <div className="card-body">
+                <h6 className="card-title">Completed</h6>
+                <p className="display-6 mb-0 text-success">{completedTasks}</p>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-4">
+            <div className="card text-center border-warning">
+              <div className="card-body">
+                <h6 className="card-title">Pending</h6>
+                <p className="display-6 mb-0 text-warning">{pendingTasks}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* End Bootstrap Card Row for Task Stats */}
+        {/* Removed duplicate stat lines, keep only charts and headers */}
+        <div className="row">
+          <div className="col-md-6 mb-4 mb-md-0">
+            <h6>Project Overview</h6>
+            {totalProjects > 0 ? <Pie data={projectData} options={{ responsive: true }} /> : <p className='text-muted'>No project data</p>}
+          </div>
+          <div className="col-md-6">
+            <h6>Task Overview</h6>
+            {totalTasks > 0 ? <Bar data={taskData} options={{ responsive: true }} /> : <p className='text-muted'>No task data</p>}
           </div>
         </div>
       </div>
