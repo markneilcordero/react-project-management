@@ -10,6 +10,7 @@ import Notification from './components/Notification';
 import Settings from './components/Settings';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
+import OnboardingNote from './components/OnboardingNote';
 
 // Add a helper to generate unique IDs
 function generateId() {
@@ -305,6 +306,20 @@ function App() {
         {activeSection === 'dashboard' && (
           <>
             <h1 className="mb-4" tabIndex={0}>Project Management</h1>
+            <OnboardingNote storageKey="onboardingNoteDashboard">
+              <div style={{ fontSize: '2rem', marginRight: '1rem' }}>👋✨</div>
+              <div className="flex-grow-1">
+                <h5 className="card-title mb-2">Welcome to Project Management! 🚀</h5>
+                <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
+                  <li>➕ <b>Add</b> projects and tasks with the buttons above.</li>
+                  <li>📝 <b>Edit</b> or <b>delete</b> items anytime.</li>
+                  <li>📊 <b>Dashboard</b> shows your progress at a glance.</li>
+                  <li>⚙️ <b>Settings</b> lets you reset your data.</li>
+                  <li>💡 <b>Tip:</b> Click cards to filter projects!</li>
+                </ul>
+                <span style={{ fontSize: '1.1em' }}>Have fun managing your work! 🎉</span>
+              </div>
+            </OnboardingNote>
             <div className="row mb-4">
               <div className="col-md-12">
                 <Dashboard
@@ -321,6 +336,19 @@ function App() {
         {activeSection === 'projects' && (
           <div className="row">
             <div className="col-12">
+              <OnboardingNote storageKey="onboardingNoteProjects">
+                <div style={{ fontSize: '2rem', marginRight: '1rem' }}>📁🛠️</div>
+                <div className="flex-grow-1">
+                  <h5 className="card-title mb-2">Projects Section Guide</h5>
+                  <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
+                    <li>➕ <b>Add</b> a new project with the button above.</li>
+                    <li>✏️ <b>Edit</b> or 🗑️ <b>delete</b> projects as needed.</li>
+                    <li>🔍 <b>Filter</b> projects by status.</li>
+                    <li>📂 <b>View tasks</b> for each project.</li>
+                  </ul>
+                  <span style={{ fontSize: '1.1em' }}>Organize your projects easily! 🧩</span>
+                </div>
+              </OnboardingNote>
               <div className="d-flex justify-content-end mb-3 gap-2">
                 <button className="btn btn-primary" onClick={() => { setShowAddProject(true); setProjectModalOpen(true); setEditingProjectId(null); setModalOpen(false); setShowAddTask(false); }} type="button">+ Add Project</button>
                 <button className="btn btn-success" onClick={() => { setModalOpen(true); setShowAddTask(true); setSelectedProjectId(null); }} type="button">+ Add Task</button>
@@ -351,6 +379,19 @@ function App() {
         {activeSection === 'tasks' && (
           <div className="row">
             <div className="col-md-12">
+              <OnboardingNote storageKey="onboardingNoteTasks">
+                <div style={{ fontSize: '2rem', marginRight: '1rem' }}>✅📝</div>
+                <div className="flex-grow-1">
+                  <h5 className="card-title mb-2">Tasks Section Guide</h5>
+                  <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
+                    <li>➕ <b>Add</b> tasks to any project.</li>
+                    <li>✏️ <b>Edit</b> or 🗑️ <b>delete</b> tasks anytime.</li>
+                    <li>📅 <b>Set due dates</b> and priorities.</li>
+                    <li>🔄 <b>Track progress</b> by updating status.</li>
+                  </ul>
+                  <span style={{ fontSize: '1.1em' }}>Stay on top of your tasks! 🏆</span>
+                </div>
+              </OnboardingNote>
               <div className="d-flex justify-content-end mb-3 gap-2">
                 <button className="btn btn-primary" onClick={() => { setActiveSection('projects'); setShowAddProject(true); setProjectModalOpen(true); setEditingProjectId(null); setModalOpen(false); setShowAddTask(false); }} type="button">+ Add Project</button>
                 <button className="btn btn-success" onClick={() => { setModalOpen(true); setShowAddTask(true); setSelectedProjectId(null); }} type="button">+ Add Task</button>
@@ -382,7 +423,18 @@ function App() {
         )}
         {activeSection === 'settings' && (
           <div className="row mb-4">
-            <div className="col-md-6">
+            <div className="col-md-12">
+              <OnboardingNote storageKey="onboardingNoteSettings">
+                <div style={{ fontSize: '2rem', marginRight: '1rem' }}>⚙️🧹</div>
+                <div className="flex-grow-1">
+                  <h5 className="card-title mb-2">Settings Section Guide</h5>
+                  <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
+                    <li>🧹 <b>Reset</b> all your project and task data.</li>
+                    <li>⚠️ <b>Warning:</b> This action cannot be undone!</li>
+                  </ul>
+                  <span style={{ fontSize: '1.1em' }}>Manage your app settings here. 🔒</span>
+                </div>
+              </OnboardingNote>
               <Settings onResetData={handleResetData} />
             </div>
           </div>
@@ -417,7 +469,8 @@ function App() {
         )}
         {/* Modal for Edit Task */}
         {editingTaskIndex !== null && selectedProjectId && (
-          <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true">
+          <>
+            <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true"></div>
             <div className="modal-dialog modal-dialog-centered" role="document">
               <div className="modal-content">
                 <div className="modal-header">
@@ -435,7 +488,7 @@ function App() {
                 </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>
