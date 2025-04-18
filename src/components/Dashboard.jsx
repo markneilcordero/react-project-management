@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pie, Bar, Radar, Doughnut, PolarArea } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -13,10 +13,12 @@ import {
   LineElement,
 } from 'chart.js';
 import './DashboardResponsive.css';
+import DashboardCard from './DashboardCard';
+import Notification from './Notification';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, RadialLinearScale, PointElement, LineElement);
 
-const Dashboard = ({ projects, tasks, onCardClick }) => {
+const Dashboard = ({ projects, tasks, onCardClick, onAddProject, onAddTask }) => {
   // Calculate project statistics
   const totalProjects = projects.length;
   const completedProjects = projects.filter((p) => p.status === 'Completed').length;
@@ -109,42 +111,124 @@ const Dashboard = ({ projects, tasks, onCardClick }) => {
     return Math.round((completed / projectTasks.length) * 100);
   }
 
+  // Dismissed notifications state (persisted in localStorage)
+  const [dismissedAlerts, setDismissedAlerts] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('dismissedAlerts') || '[]');
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('dismissedAlerts', JSON.stringify(dismissedAlerts));
+  }, [dismissedAlerts]);
+
+  // Notification for upcoming deadlines (within 7 days or overdue)
+  const upcomingAlerts = projects
+    .filter(p => p.endDate)
+    .map(p => ({
+      ...p,
+      end: new Date(p.endDate),
+      daysLeft: Math.ceil((new Date(p.endDate) - today) / (1000 * 60 * 60 * 24))
+    }))
+    .filter(p => p.daysLeft <= 7 && !dismissedAlerts.includes(p.id))
+    .sort((a, b) => a.daysLeft - b.daysLeft);
+  const hasAlerts = upcomingAlerts.length > 0;
+
+  // Handler to dismiss a notification
+  const handleDismissAlert = (id) => {
+    setDismissedAlerts(prev => [...prev, id]);
+  };
+
   return (
     <div className="card"> {/* Wrap in a card */}
       <div className="card-body"> {/* Card body */}
+        {/* User Notifications for upcoming deadlines */}
+        {hasAlerts && (
+          <div className="mb-3">
+            {upcomingAlerts.map(alert => {
+              let icon = '⏰';
+              let type = 'warning';
+              let colorClass = '';
+              let message = `Project "${alert.title}" is `;
+              if (alert.daysLeft < 0) {
+                icon = '❌';
+                type = 'error';
+                colorClass = 'text-danger';
+                message += 'overdue!';
+              } else if (alert.daysLeft === 0) {
+                icon = '⚠️';
+                type = 'warning';
+                colorClass = 'text-warning';
+                message += 'due today!';
+              } else if (alert.daysLeft <= 3) {
+                icon = '⚡';
+                type = 'warning';
+                colorClass = 'text-warning';
+                message += `due in ${alert.daysLeft} day${alert.daysLeft === 1 ? '' : 's'}`;
+              } else {
+                icon = '⏳';
+                type = 'info';
+                colorClass = 'text-info';
+                message += `due in ${alert.daysLeft} days`;
+              }
+              return (
+                <Notification
+                  key={alert.id}
+                  message={<span><span className={colorClass} style={{fontWeight:'bold',fontSize:'1.2em'}}>{icon}</span> {message}</span>}
+                  type={type}
+                  onClose={() => handleDismissAlert(alert.id)}
+                />
+              );
+            })}
+          </div>
+        )}
+        <div className="d-flex justify-content-end mb-3 gap-2">
+          <button className="btn btn-primary" onClick={onAddProject} type="button">+ Add Project</button>
+          <button className="btn btn-success" onClick={onAddTask} type="button">+ Add Task</button>
+        </div>
         <h5 className="card-title mb-4 dashboard-card-title">📊 Dashboard</h5> {/* Card title */}
         <div className="row mb-3"> {/* Bootstrap Card Row for Project Stats */}
           <div className="col-md-3">
-            <div className="card text-center border-primary clickable-card" onClick={() => onCardClick && onCardClick('all-projects')} style={{ cursor: 'pointer' }}>
-              <div className="card-body">
-                <h6 className="card-title dashboard-card-title">🗂️ Total Projects</h6>
-                <p className="display-6 mb-0 dashboard-stat-number">{totalProjects}</p>
-              </div>
-            </div>
+            <DashboardCard
+              title="🗂️ Total Projects"
+              value={totalProjects}
+              badge="All"
+              badgeClass="bg-primary"
+              onClick={() => onCardClick && onCardClick('all-projects')}
+              className="border-primary"
+            />
           </div>
           <div className="col-md-3">
-            <div className="card text-center border-success clickable-card" onClick={() => onCardClick && onCardClick('completed-projects')} style={{ cursor: 'pointer' }}>
-              <div className="card-body">
-                <h6 className="card-title dashboard-card-title">✅ Completed</h6>
-                <p className="display-6 mb-0 text-success dashboard-stat-number">{completedProjects}</p>
-              </div>
-            </div>
+            <DashboardCard
+              title="✅ Completed"
+              value={completedProjects}
+              badge="Healthy"
+              badgeClass="bg-success"
+              onClick={() => onCardClick && onCardClick('completed-projects')}
+              className="border-success"
+            />
           </div>
           <div className="col-md-3">
-            <div className="card text-center border-info clickable-card" onClick={() => onCardClick && onCardClick('inprogress-projects')} style={{ cursor: 'pointer' }}>
-              <div className="card-body">
-                <h6 className="card-title dashboard-card-title">🔄 In Progress</h6>
-                <p className="display-6 mb-0 text-info dashboard-stat-number">{inProgressProjects}</p>
-              </div>
-            </div>
+            <DashboardCard
+              title="🔄 In Progress"
+              value={inProgressProjects}
+              badge="Active"
+              badgeClass="bg-info"
+              onClick={() => onCardClick && onCardClick('inprogress-projects')}
+              className="border-info"
+            />
           </div>
           <div className="col-md-3">
-            <div className="card text-center border-warning clickable-card" onClick={() => onCardClick && onCardClick('pending-projects')} style={{ cursor: 'pointer' }}>
-              <div className="card-body">
-                <h6 className="card-title dashboard-card-title">⏳ Pending</h6>
-                <p className="display-6 mb-0 text-warning dashboard-stat-number">{pendingProjects}</p>
-              </div>
-            </div>
+            <DashboardCard
+              title="⏳ Pending"
+              value={pendingProjects}
+              badge="Attention"
+              badgeClass="bg-warning text-dark"
+              onClick={() => onCardClick && onCardClick('pending-projects')}
+              className="border-warning"
+            />
           </div>
         </div>
         {/* End Bootstrap Card Row for Project Stats */}
@@ -223,6 +307,67 @@ const Dashboard = ({ projects, tasks, onCardClick }) => {
             </div>
           </div>
         </div>
+        {/* Recent Activity Section */}
+        <div className="row mb-4">
+          <div className="col-12">
+            <div className="card border-info">
+              <div className="card-body">
+                <h6 className="card-title dashboard-card-title">🕒 Recent Activity</h6>
+                <ul className="list-group list-group-flush">
+                  {[...projects]
+                    .filter(p => p.endDate)
+                    .sort((a, b) => new Date(b.endDate) - new Date(a.endDate))
+                    .slice(0, 3)
+                    .map((p) => {
+                      const progress = getProjectProgress(p);
+                      let badge = 'bg-secondary';
+                      let badgeText = 'Unknown';
+                      if (p.status === 'Completed') { badge = 'bg-success'; badgeText = 'Healthy'; }
+                      else if (p.status === 'In Progress') { badge = 'bg-info'; badgeText = 'Active'; }
+                      else if (p.status === 'Pending') { badge = 'bg-warning text-dark'; badgeText = 'Attention'; }
+                      return (
+                        <li key={p.id} className="list-group-item">
+                          <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                            <span>
+                              <strong>Project:</strong> {p.title || 'Untitled'}
+                              <span className={`ms-2 badge ${badge}`}>{badgeText}</span>
+                            </span>
+                            <span className="text-muted">End: {new Date(p.endDate).toLocaleDateString()}</span>
+                          </div>
+                          <div className="progress mt-2" style={{ height: '12px' }}>
+                            <div
+                              className={`progress-bar${progress === 100 ? ' bg-success' : progress >= 50 ? ' bg-info' : ' bg-warning'}`}
+                              role="progressbar"
+                              style={{ width: `${progress}%` }}
+                              aria-valuenow={progress}
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            >
+                            </div>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  {/* ...existing code for recent tasks... */}
+                  {Object.entries(tasks)
+                    .flatMap(([pid, tlist]) => tlist.map(t => ({ ...t, pid })))
+                    .filter(t => t.dueDate)
+                    .sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate))
+                    .slice(0, 2)
+                    .map((t, idx) => (
+                      <li key={t.title + t.dueDate + idx} className="list-group-item d-flex justify-content-between align-items-center">
+                        <span>
+                          <strong>Task:</strong> {t.title}
+                          <span className="ms-2 badge bg-secondary">{t.status}</span>
+                        </span>
+                        <span className="text-muted">Due: {new Date(t.dueDate).toLocaleDateString()}</span>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
         {/* Removed duplicate stat lines, keep only charts and headers */}
         <div className="row g-3 flex-wrap"> {/* Responsive row with gap */}
           <div className="col-12 col-md-6 mb-4 mb-md-0 d-flex flex-column align-items-center">
@@ -270,7 +415,7 @@ const Dashboard = ({ projects, tasks, onCardClick }) => {
                           callback: function(value) { return Number.isInteger(value) ? value : null; }
                         }
                       }
-                    },
+                    }
                   }}
                 />
               ) : (

@@ -124,6 +124,9 @@ function App() {
   const width = useWindowWidth();
   const isDesktop = width >= 992;
   const [projectFilter, setProjectFilter] = useState('All');
+  // Add state to control quick add
+  const [showAddProject, setShowAddProject] = useState(false);
+  const [showAddTask, setShowAddTask] = useState(false);
 
   const showNotification = (message, type = 'error') => {
     setNotification({ message, type });
@@ -222,6 +225,21 @@ function App() {
     else if (type === 'pending-projects') setProjectFilter('Pending');
   };
 
+  // Quick Action handlers
+  const handleAddProject = () => {
+    setActiveSection('projects');
+    setEditingProjectId(null);
+    setShowAddProject(true);
+    setShowAddTask(false);
+  };
+  const handleAddTask = () => {
+    setActiveSection('projects');
+    setShowAddProject(false);
+    setShowAddTask(true);
+    setEditingProjectId(null);
+    setSelectedProjectId(null); // Prompt user to select project
+  };
+
   return (
     <div className="d-flex">
       {isDesktop ? (
@@ -242,7 +260,13 @@ function App() {
             <h1 className="mb-4" tabIndex={0}>Project Management</h1>
             <div className="row mb-4">
               <div className="col-md-12">
-                <Dashboard projects={projects} tasks={tasks} onCardClick={handleDashboardCardClick} />
+                <Dashboard
+                  projects={projects}
+                  tasks={tasks}
+                  onCardClick={handleDashboardCardClick}
+                  onAddProject={handleAddProject}
+                  onAddTask={handleAddTask}
+                />
               </div>
             </div>
           </>
@@ -251,28 +275,70 @@ function App() {
           <div className="row">
             <div className="col-md-6">
               <h2 className="mb-3" tabIndex={0}>Projects</h2>
-              <ProjectForm
-                onSave={handleSaveProject}
-                project={editingProjectId !== null ? projects.find((p) => p.id === editingProjectId) : null}
-              />
+              {/* Show ProjectForm if adding or editing */}
+              {(showAddProject || editingProjectId !== null) && (
+                <ProjectForm
+                  onSave={handleSaveProject}
+                  project={editingProjectId !== null ? projects.find((p) => p.id === editingProjectId) : null}
+                />
+              )}
               <ProjectList
                 projects={projects}
-                onEdit={handleEditProject}
+                onEdit={id => {
+                  setEditingProjectId(id);
+                  setShowAddProject(false);
+                  setShowAddTask(false);
+                }}
                 onDelete={handleDeleteProject}
-                onTasks={handleProjectSelection}
+                onTasks={id => {
+                  setSelectedProjectId(id);
+                  setShowAddTask(true);
+                  setShowAddProject(false);
+                  setEditingProjectId(null);
+                }}
                 onStatusChange={handleStatusChange}
                 filterStatus={projectFilter}
               />
             </div>
             <div className="col-md-6">
-              {selectedProjectId !== null && projects.find((p) => p.id === selectedProjectId) && (
+              {/* Show TaskForm if adding or editing a task and a project is selected */}
+              {showAddTask && selectedProjectId && (
                 <div className="mb-4" aria-live="polite">
                   <h2 className="mb-3" tabIndex={0}>
-                    Tasks for {projects.find((p) => p.id === selectedProjectId).title}
+                    Add Task for {projects.find((p) => p.id === selectedProjectId)?.title}
                   </h2>
                   <TaskForm
                     onSave={(task) => handleSaveTask(selectedProjectId, task)}
-                    task={editingTaskIndex !== null ? (tasks[selectedProjectId]?.[editingTaskIndex] || null) : null}
+                    task={null}
+                  />
+                  <TaskList
+                    tasks={tasks[selectedProjectId] || []}
+                    onEdit={handleEditTask}
+                    onDelete={(taskIndex) => handleDeleteTask(selectedProjectId, taskIndex)}
+                  />
+                  <button
+                    className="btn btn-secondary mt-2"
+                    onClick={() => {
+                      setSelectedProjectId(null);
+                      setEditingProjectId(null);
+                      setEditingTaskIndex(null);
+                      setShowAddTask(false);
+                    }}
+                    aria-label="Close task list and return to projects"
+                  >
+                    Close Tasks
+                  </button>
+                </div>
+              )}
+              {/* Show TaskForm if editing a task */}
+              {editingTaskIndex !== null && selectedProjectId && (
+                <div className="mb-4" aria-live="polite">
+                  <h2 className="mb-3" tabIndex={0}>
+                    Edit Task for {projects.find((p) => p.id === selectedProjectId)?.title}
+                  </h2>
+                  <TaskForm
+                    onSave={(task) => handleSaveTask(selectedProjectId, task)}
+                    task={tasks[selectedProjectId]?.[editingTaskIndex] || null}
                   />
                   <TaskList
                     tasks={tasks[selectedProjectId] || []}
