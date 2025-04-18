@@ -184,7 +184,18 @@ const Dashboard = ({ projects, tasks }) => {
                     title: { display: true, text: 'Tasks per Project by Status' },
                     tooltip: { enabled: true }
                   },
-                  scales: { x: { stacked: true, title: { display: true, text: 'Projects' } }, y: { stacked: true, title: { display: true, text: 'Number of Tasks' } } },
+                  scales: {
+                    x: { stacked: true, title: { display: true, text: 'Projects' } },
+                    y: {
+                      stacked: true,
+                      title: { display: true, text: 'Number of Tasks' },
+                      beginAtZero: true,
+                      ticks: {
+                        stepSize: 1,
+                        callback: function(value) { return Number.isInteger(value) ? value : null; }
+                      }
+                    }
+                  },
                 }}
               />
             ) : (
