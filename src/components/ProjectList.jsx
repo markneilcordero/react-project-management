@@ -48,37 +48,37 @@ const ProjectList = ({ projects, onEdit, onDelete, onTasks, onStatusChange }) =>
           {filteredProjects.length === 0 ? (
             <p className="text-muted fs-5">No projects match the current filter.</p>
           ) : (
-            <ul className="list-group">
+            <div className="d-flex flex-column gap-4">
               {filteredProjects.map((project) => {
                 const originalIndex = getOriginalIndex(project);
                 return (
-                  <li key={originalIndex} className="list-group-item py-4">
-                    <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-4">
-                      <div className="flex-grow-1">
+                  <div key={originalIndex} className="w-100">
+                    <div className="card h-100">
+                      <div className="card-body d-flex flex-column">
                         <h6 className="mb-2 fs-5 text-break">{project.title}</h6>
                         <p className="mb-2 fs-6 text-break">{project.description}</p>
-                        <small className="text-muted">Status: {project.status || 'Not Set'} | Start: {project.startDate} | End: {project.endDate}</small>
-                      </div>
-                      <div className="d-flex flex-wrap gap-3 align-items-center mt-3 mt-md-0 justify-content-md-end project-list-actions">
-                        <select
-                          className="form-select form-select-sm me-3"
-                          style={{ width: 'auto', minWidth: 130 }}
-                          value={project.status || 'Pending'}
-                          onChange={e => onStatusChange(originalIndex, e.target.value)}
-                        >
-                          <option value="Pending">Pending</option>
-                          <option value="In Progress">In Progress</option>
-                          <option value="Completed">Completed</option>
-                        </select>
-                        <button onClick={() => onEdit(originalIndex)} className="btn btn-sm btn-outline-warning px-4">Edit</button> {/* Bootstrap button classes */}
-                        <button onClick={() => onDelete(originalIndex)} className="btn btn-sm btn-outline-danger px-4">Delete</button> {/* Bootstrap button classes */}
-                        <button onClick={() => onTasks(project.id)} className="btn btn-sm btn-outline-primary px-4">Tasks</button> {/* New Tasks button */}
+                        <small className="text-muted mb-2">Status: {project.status || 'Not Set'} | Start: {project.startDate} | End: {project.endDate}</small>
+                        <div className="d-flex flex-wrap gap-2 align-items-center mt-auto project-list-actions">
+                          <select
+                            className="form-select form-select-sm me-2"
+                            style={{ width: 'auto', minWidth: 130 }}
+                            value={project.status || 'Pending'}
+                            onChange={e => onStatusChange(originalIndex, e.target.value)}
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                          </select>
+                          <button onClick={() => onEdit(originalIndex)} className="btn btn-sm btn-outline-warning px-3">Edit</button>
+                          <button onClick={() => onDelete(originalIndex)} className="btn btn-sm btn-outline-danger px-3">Delete</button>
+                          <button onClick={() => onTasks(project.id)} className="btn btn-sm btn-outline-primary px-3">Tasks</button>
+                        </div>
                       </div>
                     </div>
-                  </li>
+                  </div>
                 );
               })}
-            </ul>
+            </div>
           )}
         </div>
       </div>
