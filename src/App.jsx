@@ -112,10 +112,12 @@ function App() {
       setProjects([...projects, newProject]);
       showNotification('Project added successfully!', 'success');
     }
+    setEditingTaskIndex(null);
   };
 
   const handleEditProject = (id) => {
     setEditingProjectId(id);
+    setEditingTaskIndex(null);
   };
 
   const handleDeleteProject = (id) => {
@@ -125,8 +127,10 @@ function App() {
     const updatedTasks = { ...tasks };
     delete updatedTasks[id];
     setTasks(updatedTasks);
-    // Reset selection if needed
+    // Reset selection and editing state if needed
     if (selectedProjectId === id) setSelectedProjectId(null);
+    if (editingProjectId === id) setEditingProjectId(null);
+    setEditingTaskIndex(null);
     showNotification('Project deleted successfully!', 'success');
   };
 
@@ -141,10 +145,12 @@ function App() {
     }
     setTasks({ ...tasks, [projectId]: projectTasks });
     setEditingTaskIndex(null);
+    setEditingProjectId(null);
   };
 
   const handleEditTask = (taskIndex) => {
     setEditingTaskIndex(taskIndex);
+    setEditingProjectId(null);
   };
 
   const handleDeleteTask = (projectId, taskIndex) => {
@@ -152,6 +158,7 @@ function App() {
     projectTasks.splice(taskIndex, 1);
     setTasks({ ...tasks, [projectId]: projectTasks });
     showNotification('Task deleted successfully!', 'success');
+    setEditingProjectId(null);
   };
 
   const handleResetData = () => {
@@ -168,6 +175,12 @@ function App() {
     );
     setProjects(updatedProjects);
     showNotification('Project status updated!', 'success');
+  };
+
+  const handleProjectSelection = (id) => {
+    setSelectedProjectId(id);
+    setEditingProjectId(null);
+    setEditingTaskIndex(null);
   };
 
   return (
@@ -201,7 +214,7 @@ function App() {
             projects={projects}
             onEdit={handleEditProject}
             onDelete={handleDeleteProject}
-            onTasks={setSelectedProjectId}
+            onTasks={handleProjectSelection}
             onStatusChange={handleStatusChange}
           />
         </div>
@@ -218,7 +231,11 @@ function App() {
                 onEdit={handleEditTask}
                 onDelete={(taskIndex) => handleDeleteTask(selectedProjectId, taskIndex)}
               />
-              <button className="btn btn-secondary mt-2" onClick={() => setSelectedProjectId(null)}>Close Tasks</button>
+              <button className="btn btn-secondary mt-2" onClick={() => {
+                setSelectedProjectId(null);
+                setEditingProjectId(null);
+                setEditingTaskIndex(null);
+              }}>Close Tasks</button>
             </div>
           )}
         </div>
