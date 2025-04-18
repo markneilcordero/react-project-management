@@ -329,6 +329,7 @@ function App() {
                 projects={projects}
                 onEdit={id => {
                   setEditingProjectId(id);
+                  setProjectModalOpen(true);
                   setShowAddProject(false);
                   setShowAddTask(false);
                 }}
