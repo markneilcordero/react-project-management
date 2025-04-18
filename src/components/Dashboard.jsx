@@ -94,6 +94,13 @@ const Dashboard = ({ projects, tasks }) => {
     })),
   };
 
+  // Helper: Get next 3–5 projects by end date, highlight overdue
+  const today = new Date('2025-04-18');
+  const upcomingProjects = [...projects]
+    .filter(p => p.endDate)
+    .sort((a, b) => new Date(a.endDate) - new Date(b.endDate))
+    .slice(0, 5);
+
   return (
     <div className="card"> {/* Wrap in a card */}
       <div className="card-body"> {/* Card body */}
@@ -160,6 +167,37 @@ const Dashboard = ({ projects, tasks }) => {
           </div>
         </div>
         {/* End Bootstrap Card Row for Task Stats */}
+        {/* Upcoming Deadlines Section */}
+        <div className="row mb-4">
+          <div className="col-12">
+            <div className="card border-danger">
+              <div className="card-body">
+                <h6 className="card-title dashboard-card-title">⏰ Upcoming Deadlines</h6>
+                {upcomingProjects.length === 0 ? (
+                  <p className="text-muted mb-0">No upcoming project deadlines.</p>
+                ) : (
+                  <ul className="list-group list-group-flush">
+                    {upcomingProjects.map((p) => {
+                      const isOverdue = new Date(p.endDate) < today;
+                      return (
+                        <li
+                          key={p.id || p.title}
+                          className={`list-group-item d-flex justify-content-between align-items-center ${isOverdue ? 'text-danger fw-bold' : ''}`}
+                        >
+                          <span>{p.title || 'Untitled'}</span>
+                          <span>
+                            {p.endDate ? new Date(p.endDate).toLocaleDateString() : 'No end date'}
+                            {isOverdue && <span className="ms-2 badge bg-danger">Overdue</span>}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
         {/* Removed duplicate stat lines, keep only charts and headers */}
         <div className="row g-3 flex-wrap"> {/* Responsive row with gap */}
           <div className="col-12 col-md-6 mb-4 mb-md-0 d-flex flex-column align-items-center">
