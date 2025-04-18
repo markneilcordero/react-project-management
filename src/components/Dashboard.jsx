@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pie, Bar, Radar, Doughnut } from 'react-chartjs-2';
+import { Pie, Bar, Radar, Doughnut, PolarArea } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   ArcElement,
@@ -48,6 +48,18 @@ const Dashboard = ({ projects, tasks }) => {
     ],
   };
 
+  // Data for task status (Doughnut)
+  const inProgressTasks = Object.values(tasks).flat().filter((t) => t.status === 'Ongoing' || t.status === 'In Progress').length;
+  const taskStatusData = {
+    labels: ['Completed', 'In Progress', 'Pending'],
+    datasets: [
+      {
+        data: [completedTasks, inProgressTasks, pendingTasks],
+        backgroundColor: ['#4caf50', '#2196f3', '#f44336'],
+      },
+    ],
+  };
+
   // Data for project names chart
   const projectNames = projects.map((p) => p.title || 'Untitled');
   const projectNamesData = {
@@ -55,6 +67,22 @@ const Dashboard = ({ projects, tasks }) => {
     datasets: [
       {
         data: projectNames.length > 0 ? Array(projectNames.length).fill(1) : [1],
+        backgroundColor: [
+          '#4caf50', '#2196f3', '#f44336', '#ff9800', '#9c27b0', '#00bcd4', '#8bc34a', '#ffc107', '#e91e63', '#795548',
+        ],
+      },
+    ],
+  };
+
+  // Data for task list (Polar Area)
+  const taskListLabels = Object.entries(tasks).flatMap(([projectIdx, taskArr]) =>
+    (taskArr || []).map((task, i) => `${projects[projectIdx]?.title || 'Project'}: ${task.title || 'Untitled'}`)
+  );
+  const taskListData = {
+    labels: taskListLabels.length > 0 ? taskListLabels : ['No Tasks'],
+    datasets: [
+      {
+        data: taskListLabels.length > 0 ? Array(taskListLabels.length).fill(1) : [1],
         backgroundColor: [
           '#4caf50', '#2196f3', '#f44336', '#ff9800', '#9c27b0', '#00bcd4', '#8bc34a', '#ffc107', '#e91e63', '#795548',
         ],
@@ -132,7 +160,7 @@ const Dashboard = ({ projects, tasks }) => {
         <div className="row">
           <div className="col-md-6 mb-4 mb-md-0">
             <h6>Project Overview</h6>
-            {totalProjects > 0 ? <Pie data={projectData} options={{ responsive: true }} /> : <p className='text-muted'>No project data</p>}
+            {totalProjects > 0 ? <Doughnut data={projectData} options={{ responsive: true }} /> : <p className='text-muted'>No project data</p>}
           </div>
           <div className="col-md-6 mb-4 mb-md-0">
             <h6>Projects List</h6>
@@ -140,7 +168,11 @@ const Dashboard = ({ projects, tasks }) => {
           </div>
           <div className="col-md-6">
             <h6>Task Overview</h6>
-            {totalTasks > 0 ? <Bar data={taskData} options={{ responsive: true }} /> : <p className='text-muted'>No task data</p>}
+            {totalTasks > 0 ? <Doughnut data={taskStatusData} options={{ responsive: true }} /> : <p className='text-muted'>No task data</p>}
+          </div>
+          <div className="col-md-6">
+            <h6>Task List</h6>
+            {totalTasks > 0 ? <Doughnut data={taskListData} options={{ responsive: true, plugins: { legend: { position: 'right' } } }} /> : <p className='text-muted'>No task list</p>}
           </div>
         </div>
       </div>
