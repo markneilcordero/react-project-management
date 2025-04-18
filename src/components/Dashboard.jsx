@@ -12,6 +12,7 @@ import {
   PointElement,
   LineElement,
 } from 'chart.js';
+import './DashboardResponsive.css';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, RadialLinearScale, PointElement, LineElement);
 
@@ -95,37 +96,37 @@ const Dashboard = ({ projects, tasks }) => {
   return (
     <div className="card"> {/* Wrap in a card */}
       <div className="card-body"> {/* Card body */}
-        <h5 className="card-title mb-4">Dashboard</h5> {/* Card title */}
+        <h5 className="card-title mb-4 dashboard-card-title">Dashboard</h5> {/* Card title */}
         <div className="row mb-3"> {/* Bootstrap Card Row for Project Stats */}
           <div className="col-md-3">
             <div className="card text-center border-primary">
               <div className="card-body">
-                <h6 className="card-title">Total Projects</h6>
-                <p className="display-6 mb-0">{totalProjects}</p>
+                <h6 className="card-title dashboard-card-title">Total Projects</h6>
+                <p className="display-6 mb-0 dashboard-stat-number">{totalProjects}</p>
               </div>
             </div>
           </div>
           <div className="col-md-3">
             <div className="card text-center border-success">
               <div className="card-body">
-                <h6 className="card-title">Completed</h6>
-                <p className="display-6 mb-0 text-success">{completedProjects}</p>
+                <h6 className="card-title dashboard-card-title">Completed</h6>
+                <p className="display-6 mb-0 text-success dashboard-stat-number">{completedProjects}</p>
               </div>
             </div>
           </div>
           <div className="col-md-3">
             <div className="card text-center border-info">
               <div className="card-body">
-                <h6 className="card-title">In Progress</h6>
-                <p className="display-6 mb-0 text-info">{inProgressProjects}</p>
+                <h6 className="card-title dashboard-card-title">In Progress</h6>
+                <p className="display-6 mb-0 text-info dashboard-stat-number">{inProgressProjects}</p>
               </div>
             </div>
           </div>
           <div className="col-md-3">
             <div className="card text-center border-warning">
               <div className="card-body">
-                <h6 className="card-title">Pending</h6>
-                <p className="display-6 mb-0 text-warning">{pendingProjects}</p>
+                <h6 className="card-title dashboard-card-title">Pending</h6>
+                <p className="display-6 mb-0 text-warning dashboard-stat-number">{pendingProjects}</p>
               </div>
             </div>
           </div>
@@ -135,24 +136,24 @@ const Dashboard = ({ projects, tasks }) => {
           <div className="col-md-4">
             <div className="card text-center border-primary">
               <div className="card-body">
-                <h6 className="card-title">Total Tasks</h6>
-                <p className="display-6 mb-0">{totalTasks}</p>
+                <h6 className="card-title dashboard-card-title">Total Tasks</h6>
+                <p className="display-6 mb-0 dashboard-stat-number">{totalTasks}</p>
               </div>
             </div>
           </div>
           <div className="col-md-4">
             <div className="card text-center border-success">
               <div className="card-body">
-                <h6 className="card-title">Completed</h6>
-                <p className="display-6 mb-0 text-success">{completedTasks}</p>
+                <h6 className="card-title dashboard-card-title">Completed</h6>
+                <p className="display-6 mb-0 text-success dashboard-stat-number">{completedTasks}</p>
               </div>
             </div>
           </div>
           <div className="col-md-4">
             <div className="card text-center border-warning">
               <div className="card-body">
-                <h6 className="card-title">Pending</h6>
-                <p className="display-6 mb-0 text-warning">{pendingTasks}</p>
+                <h6 className="card-title dashboard-card-title">Pending</h6>
+                <p className="display-6 mb-0 text-warning dashboard-stat-number">{pendingTasks}</p>
               </div>
             </div>
           </div>
@@ -162,13 +163,13 @@ const Dashboard = ({ projects, tasks }) => {
         <div className="row g-3 flex-wrap"> {/* Responsive row with gap */}
           <div className="col-12 col-md-6 mb-4 mb-md-0 d-flex flex-column align-items-center">
             <h6>Project Overview</h6>
-            <div style={{ width: '100%', maxWidth: '400px', height: 'auto', aspectRatio: '1', margin: '0 auto' }}>
+            <div className="dashboard-chart-container" style={{ width: '100%', maxWidth: '400px', height: 'auto', aspectRatio: '1', margin: '0 auto' }}>
               {totalProjects > 0 ? <Doughnut data={projectData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Project Status Distribution' } } }} /> : <p className='text-muted'>No project data</p>}
             </div>
           </div>
           <div className="col-12 col-md-6 mb-4 mb-md-0 d-flex flex-column align-items-center">
             <h6>Projects List</h6>
-            <div style={{ width: '100%', maxWidth: '400px', height: 'auto', aspectRatio: '1', margin: '0 auto' }}>
+            <div className="dashboard-chart-container" style={{ width: '100%', maxWidth: '400px', height: 'auto', aspectRatio: '1', margin: '0 auto' }}>
               {totalProjects > 0 ? <Doughnut data={projectNamesData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' }, title: { display: true, text: 'Projects' } } }} /> : <p className='text-muted'>No project names</p>}
             </div>
           </div>
@@ -176,13 +177,13 @@ const Dashboard = ({ projects, tasks }) => {
         <div className="row g-3 flex-wrap mt-4">
           <div className="col-12 col-md-6 mb-4 mb-md-0 d-flex flex-column align-items-center">
             <h6>Task Overview</h6>
-            <div style={{ width: '100%', maxWidth: '400px', height: 'auto', aspectRatio: '1', margin: '0 auto' }}>
+            <div className="dashboard-chart-container" style={{ width: '100%', maxWidth: '400px', height: 'auto', aspectRatio: '1', margin: '0 auto' }}>
               {totalTasks > 0 ? <Doughnut data={taskStatusData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Task Status Distribution' } } }} /> : <p className='text-muted'>No task data</p>}
             </div>
           </div>
           <div className="col-12 col-md-6 mb-4 mb-md-0 d-flex flex-column align-items-center">
             <h6>Task List</h6>
-            <div style={{ width: '100%', maxWidth: '500px', height: 'auto', aspectRatio: '1', margin: '0 auto' }}>
+            <div className="dashboard-chart-container" style={{ width: '100%', maxWidth: '500px', height: 'auto', aspectRatio: '1', margin: '0 auto' }}>
               {totalTasks > 0 ? (
                 <Bar
                   data={taskListBarData}

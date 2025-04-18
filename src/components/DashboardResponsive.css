@@ -1,0 +1,33 @@
+/* Responsive styles for Dashboard.jsx on small mobile screens */
+@media (max-width: 375px) {
+  .dashboard-chart-container {
+    max-width: 95vw !important;
+    min-width: 0;
+    padding: 0;
+  }
+  .dashboard-card-title {
+    font-size: 1.1rem;
+  }
+  .dashboard-stat-number {
+    font-size: 1.5rem;
+  }
+  .card-body, .card-title, .card {
+    padding: 0.5rem !important;
+  }
+}
+@media (max-width: 320px) {
+  .dashboard-chart-container {
+    max-width: 98vw !important;
+    min-width: 0;
+    padding: 0;
+  }
+  .dashboard-card-title {
+    font-size: 1rem;
+  }
+  .dashboard-stat-number {
+    font-size: 1.2rem;
+  }
+  .card-body, .card-title, .card {
+    padding: 0.25rem !important;
+  }
+}
