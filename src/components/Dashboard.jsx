@@ -268,40 +268,49 @@ const Dashboard = ({ projects, tasks, onCardClick, onAddProject, onAddTask }) =>
                 {upcomingProjects.length === 0 ? (
                   <p className="text-muted mb-0">No upcoming project deadlines.</p>
                 ) : (
-                  <ul className="list-group list-group-flush">
+                  <div className="deadline-cards-list">
                     {upcomingProjects.map((p) => {
                       const isOverdue = new Date(p.endDate) < today;
                       const progress = getProjectProgress(p);
+                      let icon = isOverdue ? '❌' : '⏰';
+                      let statusText = isOverdue ? 'Overdue' : 'Upcoming';
+                      let statusClass = isOverdue ? 'bg-danger text-white' : 'bg-warning text-dark';
+                      let borderClass = isOverdue ? 'border-danger' : 'border-warning';
+                      let dateLabel = p.endDate ? new Date(p.endDate).toLocaleDateString() : 'No end date';
                       return (
-                        <li
+                        <div
                           key={p.id || p.title}
-                          className={`list-group-item d-flex flex-column flex-md-row justify-content-between align-items-md-center ${isOverdue ? 'text-danger fw-bold' : ''}`}
+                          className={`deadline-card card mb-3 ${borderClass}`}
+                          style={{ boxShadow: isOverdue ? '0 0 0 2px #dc3545' : '0 0 0 2px #ffc107', borderLeft: `6px solid ${isOverdue ? '#dc3545' : '#ffc107'}` }}
                         >
-                          <div className="d-flex flex-column flex-md-row align-items-md-center gap-2">
-                            <span>{p.title || 'Untitled'}</span>
-                            <span>
-                              {p.endDate ? new Date(p.endDate).toLocaleDateString() : 'No end date'}
-                              {isOverdue && <span className="ms-2 badge bg-danger">Overdue</span>}
-                            </span>
-                          </div>
-                          <div className="w-100 w-md-50 mt-2 mt-md-0">
-                            <div className="progress" style={{ height: '18px' }}>
-                              <div
-                                className={`progress-bar${progress === 100 ? ' bg-success' : progress >= 50 ? ' bg-info' : ' bg-warning'}`}
-                                role="progressbar"
-                                style={{ width: `${progress}%` }}
-                                aria-valuenow={progress}
-                                aria-valuemin="0"
-                                aria-valuemax="100"
-                              >
-                                {progress}%
+                          <div className="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                            <div className="d-flex align-items-center gap-3">
+                              <span style={{ fontSize: '2em' }}>{icon}</span>
+                              <div>
+                                <div className="fw-bold" style={{ fontSize: '1.1em' }}>{p.title || 'Untitled'}</div>
+                                <div className="small text-muted">Due: {dateLabel}</div>
+                              </div>
+                            </div>
+                            <div className="d-flex flex-column align-items-end gap-2" style={{ minWidth: '180px' }}>
+                              <span className={`badge ${statusClass} mb-1`} style={{ fontSize: '1em' }}>{statusText}</span>
+                              <div className="progress w-100" style={{ height: '18px', minWidth: '250px', maxWidth: '400px' }}>
+                                <div
+                                  className={`progress-bar${progress === 100 ? ' bg-success' : progress >= 50 ? ' bg-info' : ' bg-warning'}`}
+                                  role="progressbar"
+                                  style={{ width: `${progress}%` }}
+                                  aria-valuenow={progress}
+                                  aria-valuemin="0"
+                                  aria-valuemax="100"
+                                >
+                                  {progress}%
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </li>
+                        </div>
                       );
                     })}
-                  </ul>
+                  </div>
                 )}
               </div>
             </div>
