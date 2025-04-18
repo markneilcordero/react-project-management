@@ -11,6 +11,7 @@ import Settings from './components/Settings';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import OnboardingNote from './components/OnboardingNote';
+import Footer from './components/Footer';
 
 // Add a helper to generate unique IDs
 function generateId() {
@@ -273,224 +274,444 @@ function App() {
   };
 
   return (
-    <div className="d-flex">
+    <div className={isDesktop ? "d-flex" : "d-flex flex-column"} style={{ minHeight: '100vh' }}>
       {isDesktop ? (
-        <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
-      ) : (
-        <Navbar activeSection={activeSection} onSectionChange={setActiveSection} />
-      )}
-      <div className="flex-grow-1 container mt-4" role="main">
-        {notification && (
-          <Notification
-            message={notification.message}
-            type={notification.type}
-            onClose={() => setNotification(null)}
-          />
-        )}
-        {/* Show ProjectForm in modal if adding or editing (always render when projectModalOpen is true) */}
-        {projectModalOpen && (
-          <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true">
-            <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Add Project</h5>
-                  <button type="button" className="btn-close" aria-label="Close" onClick={() => { setProjectModalOpen(false); setShowAddProject(false); }}></button>
-                </div>
-                <div className="modal-body">
-                  <ProjectForm onSave={handleModalSaveProject} project={editingProjectId !== null ? projects.find((p) => p.id === editingProjectId) : null} />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        {activeSection === 'dashboard' && (
-          <>
-            <h1 className="mb-4" tabIndex={0}>Project Management</h1>
-            <OnboardingNote storageKey="onboardingNoteDashboard">
-              <div style={{ fontSize: '2rem', marginRight: '1rem' }}>👋✨</div>
-              <div className="flex-grow-1">
-                <h5 className="card-title mb-2">Welcome to Project Management! 🚀</h5>
-                <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
-                  <li>➕ <b>Add</b> projects and tasks with the buttons above.</li>
-                  <li>📝 <b>Edit</b> or <b>delete</b> items anytime.</li>
-                  <li>📊 <b>Dashboard</b> shows your progress at a glance.</li>
-                  <li>⚙️ <b>Settings</b> lets you reset your data.</li>
-                  <li>💡 <b>Tip:</b> Click cards to filter projects!</li>
-                </ul>
-                <span style={{ fontSize: '1.1em' }}>Have fun managing your work! 🎉</span>
-              </div>
-            </OnboardingNote>
-            <div className="row mb-4">
-              <div className="col-md-12">
-                <Dashboard
-                  projects={projects}
-                  tasks={tasks}
-                  onCardClick={handleDashboardCardClick}
-                  onAddProject={handleAddProject}
-                  onAddTask={handleAddTask}
+        <>
+          <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
+          <div className="d-flex flex-column flex-grow-1"> {/* Wrapper for main content and footer */}
+            <main className="flex-grow-1 container mt-4" role="main">
+              {notification && (
+                <Notification
+                  message={notification.message}
+                  type={notification.type}
+                  onClose={() => setNotification(null)}
                 />
-              </div>
-            </div>
-          </>
-        )}
-        {activeSection === 'projects' && (
-          <div className="row">
-            <div className="col-12">
-              <OnboardingNote storageKey="onboardingNoteProjects">
-                <div style={{ fontSize: '2rem', marginRight: '1rem' }}>📁🛠️</div>
-                <div className="flex-grow-1">
-                  <h5 className="card-title mb-2">Projects Section Guide</h5>
-                  <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
-                    <li>➕ <b>Add</b> a new project with the button above.</li>
-                    <li>✏️ <b>Edit</b> or 🗑️ <b>delete</b> projects as needed.</li>
-                    <li>🔍 <b>Filter</b> projects by status.</li>
-                    <li>📂 <b>View tasks</b> for each project.</li>
-                  </ul>
-                  <span style={{ fontSize: '1.1em' }}>Organize your projects easily! 🧩</span>
-                </div>
-              </OnboardingNote>
-              <div className="d-flex justify-content-end mb-3 gap-2">
-                <button className="btn btn-primary" onClick={() => { setShowAddProject(true); setProjectModalOpen(true); setEditingProjectId(null); setModalOpen(false); setShowAddTask(false); }} type="button">+ Add Project</button>
-                <button className="btn btn-success" onClick={() => { setModalOpen(true); setShowAddTask(true); setSelectedProjectId(null); }} type="button">+ Add Task</button>
-              </div>
-              <h2 className="mb-3" tabIndex={0}>Projects</h2>
-              <ProjectList
-                projects={projects}
-                onEdit={id => {
-                  setEditingProjectId(id);
-                  setProjectModalOpen(true);
-                  setShowAddProject(false);
-                  setShowAddTask(false);
-                }}
-                onDelete={handleDeleteProject}
-                onTasks={id => {
-                  setSelectedProjectId(id);
-                  setShowAddTask(true);
-                  setShowAddProject(false);
-                  setEditingProjectId(null);
-                  setActiveSection('tasks'); // Fix: Go to Tasks section
-                }}
-                onStatusChange={handleStatusChange}
-                filterStatus={projectFilter}
-              />
-            </div>
-          </div>
-        )}
-        {activeSection === 'tasks' && (
-          <div className="row">
-            <div className="col-md-12">
-              <OnboardingNote storageKey="onboardingNoteTasks">
-                <div style={{ fontSize: '2rem', marginRight: '1rem' }}>✅📝</div>
-                <div className="flex-grow-1">
-                  <h5 className="card-title mb-2">Tasks Section Guide</h5>
-                  <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
-                    <li>➕ <b>Add</b> tasks to any project.</li>
-                    <li>✏️ <b>Edit</b> or 🗑️ <b>delete</b> tasks anytime.</li>
-                    <li>📅 <b>Set due dates</b> and priorities.</li>
-                    <li>🔄 <b>Track progress</b> by updating status.</li>
-                  </ul>
-                  <span style={{ fontSize: '1.1em' }}>Stay on top of your tasks! 🏆</span>
-                </div>
-              </OnboardingNote>
-              <div className="d-flex justify-content-end mb-3 gap-2">
-                <button className="btn btn-primary" onClick={() => { setActiveSection('projects'); setShowAddProject(true); setProjectModalOpen(true); setEditingProjectId(null); setModalOpen(false); setShowAddTask(false); }} type="button">+ Add Project</button>
-                <button className="btn btn-success" onClick={() => { setModalOpen(true); setShowAddTask(true); setSelectedProjectId(null); }} type="button">+ Add Task</button>
-              </div>
-              <h2 className="mb-3" tabIndex={0}>All Tasks</h2>
-              {/* Render all tasks for all projects inside Bootstrap cards */}
-              {projects.map((project) => (
-                <div key={project.id} className="mb-4">
-                  <div className="card">
-                    <div className="card-header bg-primary text-white">
-                      <h5 className="mb-0">{project.title}</h5>
+              )}
+              {/* Show ProjectForm in modal if adding or editing (always render when projectModalOpen is true) */}
+              {projectModalOpen && (
+                <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true">
+                  <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <h5 className="modal-title">Add Project</h5>
+                        <button type="button" className="btn-close" aria-label="Close" onClick={() => { setProjectModalOpen(false); setShowAddProject(false); }}></button>
+                      </div>
+                      <div className="modal-body">
+                        <ProjectForm onSave={handleModalSaveProject} project={editingProjectId !== null ? projects.find((p) => p.id === editingProjectId) : null} />
+                      </div>
                     </div>
-                    <div className="card-body">
-                      <TaskList
-                        tasks={tasks[project.id] || []}
-                        onEdit={(taskIndex) => {
-                          setSelectedProjectId(project.id);
-                          setEditingTaskIndex(taskIndex);
-                          // Removed setActiveSection('projects') to prevent navigation
+                  </div>
+                </div>
+              )}
+              {activeSection === 'dashboard' && (
+                <>
+                  <h1 className="mb-4" tabIndex={0}>Project Management</h1>
+                  <OnboardingNote storageKey="onboardingNoteDashboard">
+                    <div style={{ fontSize: '2rem', marginRight: '1rem' }}>👋✨</div>
+                    <div className="flex-grow-1">
+                      <h5 className="card-title mb-2">Welcome to Project Management! 🚀</h5>
+                      <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
+                        <li>➕ <b>Add</b> projects and tasks with the buttons above.</li>
+                        <li>📝 <b>Edit</b> or <b>delete</b> items anytime.</li>
+                        <li>📊 <b>Dashboard</b> shows your progress at a glance.</li>
+                        <li>⚙️ <b>Settings</b> lets you reset your data.</li>
+                        <li>💡 <b>Tip:</b> Click cards to filter projects!</li>
+                      </ul>
+                      <span style={{ fontSize: '1.1em' }}>Have fun managing your work! 🎉</span>
+                    </div>
+                  </OnboardingNote>
+                  <div className="row mb-4">
+                    <div className="col-md-12">
+                      <Dashboard
+                        projects={projects}
+                        tasks={tasks}
+                        onCardClick={handleDashboardCardClick}
+                        onAddProject={handleAddProject}
+                        onAddTask={handleAddTask}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+              {activeSection === 'projects' && (
+                <div className="row">
+                  <div className="col-12">
+                    <OnboardingNote storageKey="onboardingNoteProjects">
+                      <div style={{ fontSize: '2rem', marginRight: '1rem' }}>📁🛠️</div>
+                      <div className="flex-grow-1">
+                        <h5 className="card-title mb-2">Projects Section Guide</h5>
+                        <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
+                          <li>➕ <b>Add</b> a new project with the button above.</li>
+                          <li>✏️ <b>Edit</b> or 🗑️ <b>delete</b> projects as needed.</li>
+                          <li>🔍 <b>Filter</b> projects by status.</li>
+                          <li>📂 <b>View tasks</b> for each project.</li>
+                        </ul>
+                        <span style={{ fontSize: '1.1em' }}>Organize your projects easily! 🧩</span>
+                      </div>
+                    </OnboardingNote>
+                    <div className="d-flex justify-content-end mb-3 gap-2">
+                      <button className="btn btn-primary" onClick={() => { setShowAddProject(true); setProjectModalOpen(true); setEditingProjectId(null); setModalOpen(false); setShowAddTask(false); }} type="button">+ Add Project</button>
+                      <button className="btn btn-success" onClick={() => { setModalOpen(true); setShowAddTask(true); setSelectedProjectId(null); }} type="button">+ Add Task</button>
+                    </div>
+                    <h2 className="mb-3" tabIndex={0}>Projects</h2>
+                    <ProjectList
+                      projects={projects}
+                      onEdit={id => {
+                        setEditingProjectId(id);
+                        setProjectModalOpen(true);
+                        setShowAddProject(false);
+                        setShowAddTask(false);
+                      }}
+                      onDelete={handleDeleteProject}
+                      onTasks={id => {
+                        setSelectedProjectId(id);
+                        setShowAddTask(true);
+                        setShowAddProject(false);
+                        setEditingProjectId(null);
+                        setActiveSection('tasks'); // Fix: Go to Tasks section
+                      }}
+                      onStatusChange={handleStatusChange}
+                      filterStatus={projectFilter}
+                    />
+                  </div>
+                </div>
+              )}
+              {activeSection === 'tasks' && (
+                <div className="row">
+                  <div className="col-md-12">
+                    <OnboardingNote storageKey="onboardingNoteTasks">
+                      <div style={{ fontSize: '2rem', marginRight: '1rem' }}>✅📝</div>
+                      <div className="flex-grow-1">
+                        <h5 className="card-title mb-2">Tasks Section Guide</h5>
+                        <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
+                          <li>➕ <b>Add</b> tasks to any project.</li>
+                          <li>✏️ <b>Edit</b> or 🗑️ <b>delete</b> tasks anytime.</li>
+                          <li>📅 <b>Set due dates</b> and priorities.</li>
+                          <li>🔄 <b>Track progress</b> by updating status.</li>
+                        </ul>
+                        <span style={{ fontSize: '1.1em' }}>Stay on top of your tasks! 🏆</span>
+                      </div>
+                    </OnboardingNote>
+                    <div className="d-flex justify-content-end mb-3 gap-2">
+                      <button className="btn btn-primary" onClick={() => { setActiveSection('projects'); setShowAddProject(true); setProjectModalOpen(true); setEditingProjectId(null); setModalOpen(false); setShowAddTask(false); }} type="button">+ Add Project</button>
+                      <button className="btn btn-success" onClick={() => { setModalOpen(true); setShowAddTask(true); setSelectedProjectId(null); }} type="button">+ Add Task</button>
+                    </div>
+                    <h2 className="mb-3" tabIndex={0}>All Tasks</h2>
+                    {/* Render all tasks for all projects inside Bootstrap cards */}
+                    {projects.map((project) => (
+                      <div key={project.id} className="mb-4">
+                        <div className="card">
+                          <div className="card-header bg-primary text-white">
+                            <h5 className="mb-0">{project.title}</h5>
+                          </div>
+                          <div className="card-body">
+                            <TaskList
+                              tasks={tasks[project.id] || []}
+                              onEdit={(taskIndex) => {
+                                setSelectedProjectId(project.id);
+                                setEditingTaskIndex(taskIndex);
+                                // Removed setActiveSection('projects') to prevent navigation
+                              }}
+                              onDelete={(taskIndex) => handleDeleteTask(project.id, taskIndex)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {activeSection === 'settings' && (
+                <div className="row mb-4">
+                  <div className="col-md-12">
+                    <OnboardingNote storageKey="onboardingNoteSettings">
+                      <div style={{ fontSize: '2rem', marginRight: '1rem' }}>⚙️🧹</div>
+                      <div className="flex-grow-1">
+                        <h5 className="card-title mb-2">Settings Section Guide</h5>
+                        <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
+                          <li>🧹 <b>Reset</b> all your project and task data.</li>
+                          <li>⚠️ <b>Warning:</b> This action cannot be undone!</li>
+                        </ul>
+                        <span style={{ fontSize: '1.1em' }}>Manage your app settings here. 🔒</span>
+                      </div>
+                    </OnboardingNote>
+                    <Settings onResetData={handleResetData} />
+                  </div>
+                </div>
+              )}
+              {/* Modal for Add Task (should be outside section conditionals so it works everywhere) */}
+              {modalOpen && (
+                <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true">
+                  <div className="modal-dialog modal-dialog-centered" role="document">
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <h5 className="modal-title">Add Task</h5>
+                        <button type="button" className="btn-close" aria-label="Close" onClick={handleCloseModal}></button>
+                      </div>
+                      <div className="modal-body">
+                        {/* Project selector if not selected */}
+                        {!selectedProjectId && (
+                          <div className="mb-3">
+                            <label className="form-label">Select Project:</label>
+                            <select className="form-select" value={selectedProjectId || ''} onChange={e => setSelectedProjectId(e.target.value)} required>
+                              <option value="" disabled>Select a project</option>
+                              {projects.map(p => (
+                                <option key={p.id} value={p.id}>{p.title}</option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+                        <TaskForm onSave={handleModalSaveTask} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {/* Modal for Edit Task */}
+              {editingTaskIndex !== null && selectedProjectId && (
+                <>
+                  <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true"></div>
+                  <div className="modal-dialog modal-dialog-centered" role="document">
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <h5 className="modal-title">Edit Task</h5>
+                        <button type="button" className="btn-close" aria-label="Close" onClick={() => setEditingTaskIndex(null)}></button>
+                      </div>
+                      <div className="modal-body">
+                        <TaskForm
+                          onSave={(task) => {
+                            handleSaveTask(selectedProjectId, task);
+                            setEditingTaskIndex(null);
+                          }}
+                          task={tasks[selectedProjectId]?.[editingTaskIndex]}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </main>
+            <Footer />
+          </div>
+        </>
+      ) : (
+        <>
+          <Navbar activeSection={activeSection} onSectionChange={setActiveSection} />
+          <main className="flex-grow-1 container mt-4" role="main">
+            {notification && (
+              <Notification
+                message={notification.message}
+                type={notification.type}
+                onClose={() => setNotification(null)}
+              />
+            )}
+            {/* Show ProjectForm in modal if adding or editing (always render when projectModalOpen is true) */}
+            {projectModalOpen && (
+              <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true">
+                <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title">Add Project</h5>
+                      <button type="button" className="btn-close" aria-label="Close" onClick={() => { setProjectModalOpen(false); setShowAddProject(false); }}></button>
+                    </div>
+                    <div className="modal-body">
+                      <ProjectForm onSave={handleModalSaveProject} project={editingProjectId !== null ? projects.find((p) => p.id === editingProjectId) : null} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            {activeSection === 'dashboard' && (
+              <>
+                <h1 className="mb-4" tabIndex={0}>Project Management</h1>
+                <OnboardingNote storageKey="onboardingNoteDashboard">
+                  <div style={{ fontSize: '2rem', marginRight: '1rem' }}>👋✨</div>
+                  <div className="flex-grow-1">
+                    <h5 className="card-title mb-2">Welcome to Project Management! 🚀</h5>
+                    <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
+                      <li>➕ <b>Add</b> projects and tasks with the buttons above.</li>
+                      <li>📝 <b>Edit</b> or <b>delete</b> items anytime.</li>
+                      <li>📊 <b>Dashboard</b> shows your progress at a glance.</li>
+                      <li>⚙️ <b>Settings</b> lets you reset your data.</li>
+                      <li>💡 <b>Tip:</b> Click cards to filter projects!</li>
+                    </ul>
+                    <span style={{ fontSize: '1.1em' }}>Have fun managing your work! 🎉</span>
+                  </div>
+                </OnboardingNote>
+                <div className="row mb-4">
+                  <div className="col-md-12">
+                    <Dashboard
+                      projects={projects}
+                      tasks={tasks}
+                      onCardClick={handleDashboardCardClick}
+                      onAddProject={handleAddProject}
+                      onAddTask={handleAddTask}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+            {activeSection === 'projects' && (
+              <div className="row">
+                <div className="col-12">
+                  <OnboardingNote storageKey="onboardingNoteProjects">
+                    <div style={{ fontSize: '2rem', marginRight: '1rem' }}>📁🛠️</div>
+                    <div className="flex-grow-1">
+                      <h5 className="card-title mb-2">Projects Section Guide</h5>
+                      <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
+                        <li>➕ <b>Add</b> a new project with the button above.</li>
+                        <li>✏️ <b>Edit</b> or 🗑️ <b>delete</b> projects as needed.</li>
+                        <li>🔍 <b>Filter</b> projects by status.</li>
+                        <li>📂 <b>View tasks</b> for each project.</li>
+                      </ul>
+                      <span style={{ fontSize: '1.1em' }}>Organize your projects easily! 🧩</span>
+                    </div>
+                  </OnboardingNote>
+                  <div className="d-flex justify-content-end mb-3 gap-2">
+                    <button className="btn btn-primary" onClick={() => { setShowAddProject(true); setProjectModalOpen(true); setEditingProjectId(null); setModalOpen(false); setShowAddTask(false); }} type="button">+ Add Project</button>
+                    <button className="btn btn-success" onClick={() => { setModalOpen(true); setShowAddTask(true); setSelectedProjectId(null); }} type="button">+ Add Task</button>
+                  </div>
+                  <h2 className="mb-3" tabIndex={0}>Projects</h2>
+                  <ProjectList
+                    projects={projects}
+                    onEdit={id => {
+                      setEditingProjectId(id);
+                      setProjectModalOpen(true);
+                      setShowAddProject(false);
+                      setShowAddTask(false);
+                    }}
+                    onDelete={handleDeleteProject}
+                    onTasks={id => {
+                      setSelectedProjectId(id);
+                      setShowAddTask(true);
+                      setShowAddProject(false);
+                      setEditingProjectId(null);
+                      setActiveSection('tasks'); // Fix: Go to Tasks section
+                    }}
+                    onStatusChange={handleStatusChange}
+                    filterStatus={projectFilter}
+                  />
+                </div>
+              </div>
+            )}
+            {activeSection === 'tasks' && (
+              <div className="row">
+                <div className="col-md-12">
+                  <OnboardingNote storageKey="onboardingNoteTasks">
+                    <div style={{ fontSize: '2rem', marginRight: '1rem' }}>✅📝</div>
+                    <div className="flex-grow-1">
+                      <h5 className="card-title mb-2">Tasks Section Guide</h5>
+                      <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
+                        <li>➕ <b>Add</b> tasks to any project.</li>
+                        <li>✏️ <b>Edit</b> or 🗑️ <b>delete</b> tasks anytime.</li>
+                        <li>📅 <b>Set due dates</b> and priorities.</li>
+                        <li>🔄 <b>Track progress</b> by updating status.</li>
+                      </ul>
+                      <span style={{ fontSize: '1.1em' }}>Stay on top of your tasks! 🏆</span>
+                    </div>
+                  </OnboardingNote>
+                  <div className="d-flex justify-content-end mb-3 gap-2">
+                    <button className="btn btn-primary" onClick={() => { setActiveSection('projects'); setShowAddProject(true); setProjectModalOpen(true); setEditingProjectId(null); setModalOpen(false); setShowAddTask(false); }} type="button">+ Add Project</button>
+                    <button className="btn btn-success" onClick={() => { setModalOpen(true); setShowAddTask(true); setSelectedProjectId(null); }} type="button">+ Add Task</button>
+                  </div>
+                  <h2 className="mb-3" tabIndex={0}>All Tasks</h2>
+                  {/* Render all tasks for all projects inside Bootstrap cards */}
+                  {projects.map((project) => (
+                    <div key={project.id} className="mb-4">
+                      <div className="card">
+                        <div className="card-header bg-primary text-white">
+                          <h5 className="mb-0">{project.title}</h5>
+                        </div>
+                        <div className="card-body">
+                          <TaskList
+                            tasks={tasks[project.id] || []}
+                            onEdit={(taskIndex) => {
+                              setSelectedProjectId(project.id);
+                              setEditingTaskIndex(taskIndex);
+                              // Removed setActiveSection('projects') to prevent navigation
+                            }}
+                            onDelete={(taskIndex) => handleDeleteTask(project.id, taskIndex)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {activeSection === 'settings' && (
+              <div className="row mb-4">
+                <div className="col-md-12">
+                  <OnboardingNote storageKey="onboardingNoteSettings">
+                    <div style={{ fontSize: '2rem', marginRight: '1rem' }}>⚙️🧹</div>
+                    <div className="flex-grow-1">
+                      <h5 className="card-title mb-2">Settings Section Guide</h5>
+                      <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
+                        <li>🧹 <b>Reset</b> all your project and task data.</li>
+                        <li>⚠️ <b>Warning:</b> This action cannot be undone!</li>
+                      </ul>
+                      <span style={{ fontSize: '1.1em' }}>Manage your app settings here. 🔒</span>
+                    </div>
+                  </OnboardingNote>
+                  <Settings onResetData={handleResetData} />
+                </div>
+              </div>
+            )}
+            {/* Modal for Add Task (should be outside section conditionals so it works everywhere) */}
+            {modalOpen && (
+              <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true">
+                <div className="modal-dialog modal-dialog-centered" role="document">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title">Add Task</h5>
+                      <button type="button" className="btn-close" aria-label="Close" onClick={handleCloseModal}></button>
+                    </div>
+                    <div className="modal-body">
+                      {/* Project selector if not selected */}
+                      {!selectedProjectId && (
+                        <div className="mb-3">
+                          <label className="form-label">Select Project:</label>
+                          <select className="form-select" value={selectedProjectId || ''} onChange={e => setSelectedProjectId(e.target.value)} required>
+                            <option value="" disabled>Select a project</option>
+                            {projects.map(p => (
+                              <option key={p.id} value={p.id}>{p.title}</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                      <TaskForm onSave={handleModalSaveTask} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* Modal for Edit Task */}
+            {editingTaskIndex !== null && selectedProjectId && (
+              <>
+                <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true"></div>
+                <div className="modal-dialog modal-dialog-centered" role="document">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title">Edit Task</h5>
+                      <button type="button" className="btn-close" aria-label="Close" onClick={() => setEditingTaskIndex(null)}></button>
+                    </div>
+                    <div className="modal-body">
+                      <TaskForm
+                        onSave={(task) => {
+                          handleSaveTask(selectedProjectId, task);
+                          setEditingTaskIndex(null);
                         }}
-                        onDelete={(taskIndex) => handleDeleteTask(project.id, taskIndex)}
+                        task={tasks[selectedProjectId]?.[editingTaskIndex]}
                       />
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-        {activeSection === 'settings' && (
-          <div className="row mb-4">
-            <div className="col-md-12">
-              <OnboardingNote storageKey="onboardingNoteSettings">
-                <div style={{ fontSize: '2rem', marginRight: '1rem' }}>⚙️🧹</div>
-                <div className="flex-grow-1">
-                  <h5 className="card-title mb-2">Settings Section Guide</h5>
-                  <ul className="mb-2" style={{ paddingLeft: '1.2em' }}>
-                    <li>🧹 <b>Reset</b> all your project and task data.</li>
-                    <li>⚠️ <b>Warning:</b> This action cannot be undone!</li>
-                  </ul>
-                  <span style={{ fontSize: '1.1em' }}>Manage your app settings here. 🔒</span>
-                </div>
-              </OnboardingNote>
-              <Settings onResetData={handleResetData} />
-            </div>
-          </div>
-        )}
-        {/* Modal for Add Task (should be outside section conditionals so it works everywhere) */}
-        {modalOpen && (
-          <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true">
-            <div className="modal-dialog modal-dialog-centered" role="document">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Add Task</h5>
-                  <button type="button" className="btn-close" aria-label="Close" onClick={handleCloseModal}></button>
-                </div>
-                <div className="modal-body">
-                  {/* Project selector if not selected */}
-                  {!selectedProjectId && (
-                    <div className="mb-3">
-                      <label className="form-label">Select Project:</label>
-                      <select className="form-select" value={selectedProjectId || ''} onChange={e => setSelectedProjectId(e.target.value)} required>
-                        <option value="" disabled>Select a project</option>
-                        {projects.map(p => (
-                          <option key={p.id} value={p.id}>{p.title}</option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-                  <TaskForm onSave={handleModalSaveTask} />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        {/* Modal for Edit Task */}
-        {editingTaskIndex !== null && selectedProjectId && (
-          <>
-            <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true"></div>
-            <div className="modal-dialog modal-dialog-centered" role="document">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Edit Task</h5>
-                  <button type="button" className="btn-close" aria-label="Close" onClick={() => setEditingTaskIndex(null)}></button>
-                </div>
-                <div className="modal-body">
-                  <TaskForm
-                    onSave={(task) => {
-                      handleSaveTask(selectedProjectId, task);
-                      setEditingTaskIndex(null);
-                    }}
-                    task={tasks[selectedProjectId]?.[editingTaskIndex]}
-                  />
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
+              </>
+            )}
+          </main>
+          <Footer />
+        </>
+      )}
     </div>
   );
 }

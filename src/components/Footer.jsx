@@ -2,7 +2,7 @@ import './Footer.css';
 
 function Footer() {
   return (
-    <footer className="bg-white text-dark text-center py-4 mt-5 border-top">
+    <footer className="footer bg-white text-dark text-center py-4 mt-5 border-top">
       <div className="container">
         <p className="mb-2 mb-lg-3 fw-semibold">&copy; <span>{new Date().getFullYear()}</span> Mark Neil Cordero. All rights reserved.</p>
         <div className="d-flex justify-content-center flex-wrap gap-3">
