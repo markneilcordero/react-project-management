@@ -273,7 +273,7 @@ function App() {
         )}
         {activeSection === 'projects' && (
           <div className="row">
-            <div className="col-md-6">
+            <div className="col-12"> {/* Make Project List full width, single column */}
               <h2 className="mb-3" tabIndex={0}>Projects</h2>
               {/* Show ProjectForm if adding or editing */}
               {(showAddProject || editingProjectId !== null) && (
@@ -300,65 +300,7 @@ function App() {
                 filterStatus={projectFilter}
               />
             </div>
-            <div className="col-md-6">
-              {/* Show TaskForm if adding or editing a task and a project is selected */}
-              {showAddTask && selectedProjectId && (
-                <div className="mb-4" aria-live="polite">
-                  <h2 className="mb-3" tabIndex={0}>
-                    Add Task for {projects.find((p) => p.id === selectedProjectId)?.title}
-                  </h2>
-                  <TaskForm
-                    onSave={(task) => handleSaveTask(selectedProjectId, task)}
-                    task={null}
-                  />
-                  <TaskList
-                    tasks={tasks[selectedProjectId] || []}
-                    onEdit={handleEditTask}
-                    onDelete={(taskIndex) => handleDeleteTask(selectedProjectId, taskIndex)}
-                  />
-                  <button
-                    className="btn btn-secondary mt-2"
-                    onClick={() => {
-                      setSelectedProjectId(null);
-                      setEditingProjectId(null);
-                      setEditingTaskIndex(null);
-                      setShowAddTask(false);
-                    }}
-                    aria-label="Close task list and return to projects"
-                  >
-                    Close Tasks
-                  </button>
-                </div>
-              )}
-              {/* Show TaskForm if editing a task */}
-              {editingTaskIndex !== null && selectedProjectId && (
-                <div className="mb-4" aria-live="polite">
-                  <h2 className="mb-3" tabIndex={0}>
-                    Edit Task for {projects.find((p) => p.id === selectedProjectId)?.title}
-                  </h2>
-                  <TaskForm
-                    onSave={(task) => handleSaveTask(selectedProjectId, task)}
-                    task={tasks[selectedProjectId]?.[editingTaskIndex] || null}
-                  />
-                  <TaskList
-                    tasks={tasks[selectedProjectId] || []}
-                    onEdit={handleEditTask}
-                    onDelete={(taskIndex) => handleDeleteTask(selectedProjectId, taskIndex)}
-                  />
-                  <button
-                    className="btn btn-secondary mt-2"
-                    onClick={() => {
-                      setSelectedProjectId(null);
-                      setEditingProjectId(null);
-                      setEditingTaskIndex(null);
-                    }}
-                    aria-label="Close task list and return to projects"
-                  >
-                    Close Tasks
-                  </button>
-                </div>
-              )}
-            </div>
+            {/* Remove the right column for tasks to keep Project List as a single column */}
           </div>
         )}
         {activeSection === 'tasks' && (
