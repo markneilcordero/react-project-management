@@ -127,6 +127,8 @@ function App() {
   // Add state to control quick add
   const [showAddProject, setShowAddProject] = useState(false);
   const [showAddTask, setShowAddTask] = useState(false);
+  // Modal state for Add Task
+  const [modalOpen, setModalOpen] = useState(false);
 
   const showNotification = (message, type = 'error') => {
     setNotification({ message, type });
@@ -232,12 +234,31 @@ function App() {
     setShowAddProject(true);
     setShowAddTask(false);
   };
+  // Update handleAddTask to open modal
   const handleAddTask = () => {
-    setActiveSection('projects');
+    setActiveSection('dashboard'); // Stay on dashboard
     setShowAddProject(false);
     setShowAddTask(true);
     setEditingProjectId(null);
     setSelectedProjectId(null); // Prompt user to select project
+    setModalOpen(true);
+  };
+
+  // Helper: handle saving a task from modal
+  const handleModalSaveTask = (task) => {
+    if (!selectedProjectId) {
+      showNotification('Please select a project for this task.', 'error');
+      return;
+    }
+    handleSaveTask(selectedProjectId, task);
+    setModalOpen(false);
+    setShowAddTask(false);
+  };
+
+  // Helper: close modal
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setShowAddTask(false);
   };
 
   return (
@@ -273,7 +294,10 @@ function App() {
         )}
         {activeSection === 'projects' && (
           <div className="row">
-            <div className="col-12"> {/* Make Project List full width, single column */}
+            <div className="col-12">
+              <div className="d-flex justify-content-end mb-3">
+                <button className="btn btn-success" onClick={() => { setModalOpen(true); setShowAddTask(true); setSelectedProjectId(null); }} type="button">+ Add Task</button>
+              </div>
               <h2 className="mb-3" tabIndex={0}>Projects</h2>
               {/* Show ProjectForm if adding or editing */}
               {(showAddProject || editingProjectId !== null) && (
@@ -301,12 +325,14 @@ function App() {
                 filterStatus={projectFilter}
               />
             </div>
-            {/* Remove the right column for tasks to keep Project List as a single column */}
           </div>
         )}
         {activeSection === 'tasks' && (
           <div className="row">
             <div className="col-md-12">
+              <div className="d-flex justify-content-end mb-3">
+                <button className="btn btn-success" onClick={() => { setModalOpen(true); setShowAddTask(true); setSelectedProjectId(null); }} type="button">+ Add Task</button>
+              </div>
               <h2 className="mb-3" tabIndex={0}>All Tasks</h2>
               {/* Render all tasks for all projects inside Bootstrap cards */}
               {projects.map((project) => (
@@ -336,6 +362,34 @@ function App() {
           <div className="row mb-4">
             <div className="col-md-6">
               <Settings onResetData={handleResetData} />
+            </div>
+          </div>
+        )}
+        {/* Modal for Add Task (should be outside section conditionals so it works everywhere) */}
+        {modalOpen && (
+          <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true">
+            <div className="modal-dialog modal-dialog-centered" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Add Task</h5>
+                  <button type="button" className="btn-close" aria-label="Close" onClick={handleCloseModal}></button>
+                </div>
+                <div className="modal-body">
+                  {/* Project selector if not selected */}
+                  {!selectedProjectId && (
+                    <div className="mb-3">
+                      <label className="form-label">Select Project:</label>
+                      <select className="form-select" value={selectedProjectId || ''} onChange={e => setSelectedProjectId(e.target.value)} required>
+                        <option value="" disabled>Select a project</option>
+                        {projects.map(p => (
+                          <option key={p.id} value={p.id}>{p.title}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  <TaskForm onSave={handleModalSaveTask} />
+                </div>
+              </div>
             </div>
           </div>
         )}
