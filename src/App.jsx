@@ -55,6 +55,21 @@ function App() {
   const handleDeleteProject = (index) => {
     const updatedProjects = projects.filter((_, i) => i !== index);
     setProjects(updatedProjects);
+    // Remove tasks for the deleted project
+    const updatedTasks = { ...tasks };
+    delete updatedTasks[index];
+    // Re-index remaining tasks to match new project indices
+    const reindexedTasks = {};
+    updatedProjects.forEach((_, newIdx) => {
+      // Find the old index in the original projects array
+      // Since we filter by index, the new index matches the order
+      if (tasks[newIdx >= index ? newIdx + 1 : newIdx]) {
+        reindexedTasks[newIdx] = tasks[newIdx >= index ? newIdx + 1 : newIdx];
+      } else if (tasks[newIdx]) {
+        reindexedTasks[newIdx] = tasks[newIdx];
+      }
+    });
+    setTasks(reindexedTasks);
     showNotification('Project deleted successfully!', 'success');
   };
 
