@@ -4,6 +4,9 @@ import './ProjectResponsive.css';
 const ProjectList = ({ projects, onEdit, onDelete, onTasks, onStatusChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
+  // Modal state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
   const filteredProjects = projects.filter((project) => {
     const matchesSearch =
@@ -13,9 +16,6 @@ const ProjectList = ({ projects, onEdit, onDelete, onTasks, onStatusChange }) =>
       filterStatus === 'All' || project.status === filterStatus; // Assuming project has a status property
     return matchesSearch && matchesFilter;
   });
-
-  // Helper to get the original index
-  const getOriginalIndex = (project) => projects.findIndex(p => p === project);
 
   return (
     <div className="project-list-container"> {/* Responsive container */}
@@ -50,9 +50,9 @@ const ProjectList = ({ projects, onEdit, onDelete, onTasks, onStatusChange }) =>
           ) : (
             <div className="d-flex flex-column gap-4">
               {filteredProjects.map((project) => {
-                const originalIndex = getOriginalIndex(project);
+                // Use project.id instead of index
                 return (
-                  <div key={originalIndex} className="w-100">
+                  <div key={project.id} className="w-100">
                     <div className="card h-100">
                       <div className="card-body d-flex flex-column">
                         <h6 className="mb-2 fs-5 text-break">{project.title}</h6>
@@ -63,14 +63,14 @@ const ProjectList = ({ projects, onEdit, onDelete, onTasks, onStatusChange }) =>
                             className="form-select form-select-sm me-2"
                             style={{ width: 'auto', minWidth: 130 }}
                             value={project.status || 'Pending'}
-                            onChange={e => onStatusChange(originalIndex, e.target.value)}
+                            onChange={e => onStatusChange(project.id, e.target.value)}
                           >
                             <option value="Pending">Pending</option>
                             <option value="In Progress">In Progress</option>
                             <option value="Completed">Completed</option>
                           </select>
-                          <button onClick={() => onEdit(originalIndex)} className="btn btn-sm btn-outline-warning px-3">Edit</button>
-                          <button onClick={() => onDelete(originalIndex)} className="btn btn-sm btn-outline-danger px-3">Delete</button>
+                          <button onClick={() => onEdit(project.id)} className="btn btn-sm btn-outline-warning px-3">Edit</button>
+                          <button onClick={() => { setPendingDeleteId(project.id); setShowDeleteModal(true); }} className="btn btn-sm btn-outline-danger px-3">Delete</button>
                           <button onClick={() => onTasks(project.id)} className="btn btn-sm btn-outline-primary px-3">Tasks</button>
                         </div>
                       </div>
@@ -82,6 +82,30 @@ const ProjectList = ({ projects, onEdit, onDelete, onTasks, onStatusChange }) =>
           )}
         </div>
       </div>
+      {/* Bootstrap Modal for Delete Confirmation */}
+      {showDeleteModal && (
+        <>
+          <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog" aria-modal="true">
+            <div className="modal-dialog modal-dialog-centered" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Confirm Delete</h5>
+                  <button type="button" className="btn-close" aria-label="Close" onClick={() => setShowDeleteModal(false)}></button>
+                </div>
+                <div className="modal-body">
+                  <p>Are you sure you want to delete this project? This action cannot be undone.</p>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={() => setShowDeleteModal(false)}>Cancel</button>
+                  <button type="button" className="btn btn-danger" onClick={() => { onDelete(pendingDeleteId); setShowDeleteModal(false); }}>Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Modal backdrop as a sibling, not a child, and with fixed position */}
+          <div className="modal-backdrop fade show" style={{ position: 'fixed' }}></div>
+        </>
+      )}
     </div>
   );
 };
