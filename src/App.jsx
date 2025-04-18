@@ -312,7 +312,7 @@ function App() {
               {/* Show ProjectForm in modal if adding or editing */}
               {projectModalOpen && (
                 <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true">
-                  <div className="modal-dialog modal-dialog-centered" role="document">
+                  <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
                     <div className="modal-content">
                       <div className="modal-header">
                         <h5 className="modal-title">Add Project</h5>
