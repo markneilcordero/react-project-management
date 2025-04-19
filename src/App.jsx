@@ -222,7 +222,6 @@ function App() {
   const [projects, setProjects] = useLocalStorage('projects', sampleProjects, (msg) => showNotification(msg, 'error'));
   const [editingProjectId, setEditingProjectId] = useState(null);
   const [tasks, setTasks] = useLocalStorage('tasks', sampleTasks, (msg) => showNotification(msg, 'error'));
-  const [editingTaskIndex, setEditingTaskIndex] = useState(null);
   const [notification, setNotification] = useState(null);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -254,12 +253,10 @@ function App() {
       setProjects([...projects, newProject]);
       showNotification('Project added successfully!', 'success');
     }
-    setEditingTaskIndex(null);
   };
 
   const handleEditProject = (id) => {
     setEditingProjectId(id);
-    setEditingTaskIndex(null);
   };
 
   const handleDeleteProject = (id) => {
@@ -272,35 +269,53 @@ function App() {
     // Reset selection and editing state if needed
     if (selectedProjectId === id) setSelectedProjectId(null);
     if (editingProjectId === id) setEditingProjectId(null);
-    setEditingTaskIndex(null);
     showNotification('Project deleted successfully!', 'success');
   };
 
+  // Keep handleSaveTask for the 'Add Task' modal
   const handleSaveTask = (projectId, task) => {
     const projectTasks = tasks[projectId] ? [...tasks[projectId]] : [];
-    if (editingTaskIndex !== null) {
-      projectTasks[editingTaskIndex] = task;
+    // This function is now only for *adding* new tasks from the general 'Add Task' modal
+    projectTasks.push(task);
+    showNotification('Task added successfully!', 'success');
+    setTasks({ ...tasks, [projectId]: projectTasks });
+    setEditingProjectId(null); // Keep this reset
+  };
+
+  // Define the new handleUpdateTask function
+  const handleUpdateTask = (projectId, taskIndex, updatedTaskData) => {
+    console.log('[App] handleUpdateTask received:', { projectId, taskIndex, updatedTaskData });
+    const currentTasks = tasks[projectId] ? [...tasks[projectId]] : [];
+    console.log('[App] Tasks for project before update:', currentTasks);
+
+    if (taskIndex >= 0 && taskIndex < currentTasks.length) {
+      const updatedProjectTasks = [...currentTasks]; // Create a new array for the specific project
+      updatedProjectTasks[taskIndex] = updatedTaskData;
+      
+      const newTasksState = { ...tasks, [projectId]: updatedProjectTasks };
+      console.log('[App] New tasks state to be set:', newTasksState);
+      setTasks(newTasksState);
       showNotification('Task updated successfully!', 'success');
     } else {
-      projectTasks.push(task);
-      showNotification('Task added successfully!', 'success');
+      showNotification('Error updating task: Invalid index.', 'error');
+      console.error("[App] Invalid task index provided for update:", taskIndex, "Project ID:", projectId);
     }
-    setTasks({ ...tasks, [projectId]: projectTasks });
-    setEditingTaskIndex(null);
+    // Reset any potentially conflicting state if needed
     setEditingProjectId(null);
   };
 
-  const handleEditTask = (taskIndex) => {
-    setEditingTaskIndex(taskIndex);
-    setEditingProjectId(null);
-  };
-
+  // Ensure handleDeleteTask uses projectId and taskIndex correctly (it already does)
   const handleDeleteTask = (projectId, taskIndex) => {
     const projectTasks = tasks[projectId] ? [...tasks[projectId]] : [];
-    projectTasks.splice(taskIndex, 1);
-    setTasks({ ...tasks, [projectId]: projectTasks });
-    showNotification('Task deleted successfully!', 'success');
-    setEditingProjectId(null);
+    if (taskIndex >= 0 && taskIndex < projectTasks.length) { // Add bounds check
+        projectTasks.splice(taskIndex, 1);
+        setTasks({ ...tasks, [projectId]: projectTasks });
+        showNotification('Task deleted successfully!', 'success');
+    } else {
+        showNotification('Error deleting task: Invalid index.', 'error');
+        console.error("Invalid task index provided for deletion:", taskIndex);
+    }
+    setEditingProjectId(null); // Keep this reset
   };
 
   const handleResetData = () => {
@@ -322,7 +337,6 @@ function App() {
   const handleProjectSelection = (id) => {
     setSelectedProjectId(id);
     setEditingProjectId(null);
-    setEditingTaskIndex(null);
   };
 
   // Handle dashboard card clicks
@@ -510,12 +524,9 @@ function App() {
                           <div className="card-body">
                             <TaskList
                               tasks={tasks[project.id] || []}
-                              onEdit={(taskIndex) => {
-                                setSelectedProjectId(project.id);
-                                setEditingTaskIndex(taskIndex);
-                                // Removed setActiveSection('projects') to prevent navigation
-                              }}
-                              onDelete={(taskIndex) => handleDeleteTask(project.id, taskIndex)}
+                              projectId={project.id} // Pass the project ID
+                              onUpdateTask={handleUpdateTask} // Pass the new update handler
+                              onDelete={handleDeleteTask} // Pass the delete handler (already correct)
                             />
                           </div>
                         </div>
@@ -569,29 +580,6 @@ function App() {
                     </div>
                   </div>
                 </div>
-              )}
-              {/* Modal for Edit Task */}
-              {editingTaskIndex !== null && selectedProjectId && (
-                <>
-                  <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true"></div>
-                  <div className="modal-dialog modal-dialog-centered" role="document">
-                    <div className="modal-content">
-                      <div className="modal-header">
-                        <h5 className="modal-title">Edit Task</h5>
-                        <button type="button" className="btn-close" aria-label="Close" onClick={() => setEditingTaskIndex(null)}></button>
-                      </div>
-                      <div className="modal-body">
-                        <TaskForm
-                          onSave={(task) => {
-                            handleSaveTask(selectedProjectId, task);
-                            setEditingTaskIndex(null);
-                          }}
-                          task={tasks[selectedProjectId]?.[editingTaskIndex]}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </>
               )}
             </main>
             <Footer />
@@ -728,12 +716,9 @@ function App() {
                         <div className="card-body">
                           <TaskList
                             tasks={tasks[project.id] || []}
-                            onEdit={(taskIndex) => {
-                              setSelectedProjectId(project.id);
-                              setEditingTaskIndex(taskIndex);
-                              // Removed setActiveSection('projects') to prevent navigation
-                            }}
-                            onDelete={(taskIndex) => handleDeleteTask(project.id, taskIndex)}
+                            projectId={project.id} // Pass the project ID
+                            onUpdateTask={handleUpdateTask} // Pass the new update handler
+                            onDelete={handleDeleteTask} // Pass the delete handler (already correct)
                           />
                         </div>
                       </div>
@@ -787,29 +772,6 @@ function App() {
                   </div>
                 </div>
               </div>
-            )}
-            {/* Modal for Edit Task */}
-            {editingTaskIndex !== null && selectedProjectId && (
-              <>
-                <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.3)', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1050 }} tabIndex="-1" role="dialog" aria-modal="true"></div>
-                <div className="modal-dialog modal-dialog-centered" role="document">
-                  <div className="modal-content">
-                    <div className="modal-header">
-                      <h5 className="modal-title">Edit Task</h5>
-                      <button type="button" className="btn-close" aria-label="Close" onClick={() => setEditingTaskIndex(null)}></button>
-                    </div>
-                    <div className="modal-body">
-                      <TaskForm
-                        onSave={(task) => {
-                          handleSaveTask(selectedProjectId, task);
-                          setEditingTaskIndex(null);
-                        }}
-                        task={tasks[selectedProjectId]?.[editingTaskIndex]}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </>
             )}
           </main>
           <Footer />
