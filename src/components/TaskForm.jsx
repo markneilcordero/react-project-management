@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-const TaskForm = ({ onSave, task }) => {
+// Add onCancel and isEditing to props
+const TaskForm = ({ onSave, task, onCancel, isEditing }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('Low');
@@ -16,7 +17,7 @@ const TaskForm = ({ onSave, task }) => {
       setDueDate(task.dueDate || '');
       setStatus(task.status || 'Pending');
     } else {
-      // Reset form when switching from edit to add
+      // Reset form when switching from edit to add or if task is null
       setTitle('');
       setDescription('');
       setPriority('Low');
@@ -27,13 +28,9 @@ const TaskForm = ({ onSave, task }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ title, description, priority, dueDate, status });
-    // Reset form after saving
-    setTitle('');
-    setDescription('');
-    setPriority('Low');
-    setDueDate('');
-    setStatus('Pending');
+    const taskData = { title, description, priority, dueDate, status };
+    console.log('[TaskForm] Saving task:', taskData); // Log data being saved
+    onSave(taskData);
   };
 
   return (
@@ -100,7 +97,14 @@ const TaskForm = ({ onSave, task }) => {
           </select>
         </div>
       </div>
-      <button type="submit" className="btn btn-success">{task ? 'Update Task' : 'Add Task'}</button> {/* Added Bootstrap classes and dynamic text */}
+      <div className="d-flex justify-content-end gap-2"> {/* Use flexbox for button alignment */} 
+        {/* Use isEditing prop for button text (more explicit) */}
+        <button type="submit" className="btn btn-success">{isEditing ? 'Update Task' : 'Add Task'}</button>
+        {/* Add Cancel button only if onCancel is provided (likely in edit mode) */}
+        {onCancel && (
+          <button type="button" className="btn btn-secondary" onClick={onCancel}>Cancel</button>
+        )}
+      </div>
     </form>
   );
 };
