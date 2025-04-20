@@ -179,8 +179,8 @@ const TaskList = ({ tasks, projectId, onEdit, onDelete, onUpdateTask }) => { // 
                  <div className="modal-body">
                    {/* Render TaskForm inside the modal for editing */}
                    <TaskForm
-                     initialData={editingTask}
-                     onSave={handleSaveEdit} // Corrected prop name from onSubmit to onSave
+                     task={editingTask} // Changed prop name from initialData to task
+                     onSave={handleSaveEdit} 
                      onCancel={() => setShowEditModal(false)} // Pass a cancel handler
                      isEditing={true} // Indicate that this is for editing
                    />
