@@ -323,18 +323,22 @@ const Dashboard = ({ projects, tasks, onCardClick, onAddProject, onAddTask }) =>
               <div className="card-body">
                 <h6 className="card-title dashboard-card-title">🕒 Recent Activity</h6>
                 <div className="recent-activity-list">
+                  {/* Show latest projects (by endDate if available, otherwise just latest added) */}
                   {[...projects]
-                    .filter(p => p.endDate)
-                    .sort((a, b) => new Date(b.endDate) - new Date(a.endDate))
-                    .slice(0, 3)
+                    .sort((a, b) => {
+                      const dateA = a.endDate ? new Date(a.endDate) : null;
+                      const dateB = b.endDate ? new Date(b.endDate) : null;
+                      if (dateA && dateB) return dateB - dateA; // Both have dates, sort descending
+                      if (dateA) return -1; // Only A has a date, A comes first (more recent)
+                      if (dateB) return 1;  // Only B has a date, B comes first (more recent)
+                      // Optional: Add secondary sort by ID or title if no dates
+                      return (b.id || 0) - (a.id || 0); // Fallback sort by ID descending if no dates
+                    })
+                    .slice(0, 3) // Take top 3
                     .map((p) => {
-                      const progress = getProjectProgress(p);
-                      let badge = 'bg-secondary';
-                      let badgeText = 'Unknown';
-                      let icon = '📁';
-                      if (p.status === 'Completed') { badge = 'bg-success'; badgeText = 'Healthy'; icon = '✅'; }
-                      else if (p.status === 'In Progress') { badge = 'bg-info'; badgeText = 'Active'; icon = '🔄'; }
-                      else if (p.status === 'Pending') { badge = 'bg-warning text-dark'; badgeText = 'Attention'; icon = '⏳'; }
+                      // Define an icon for projects
+                      const icon = '🗂️'; // Example: Folder icon
+                      // ... existing map function code ...
                       return (
                         <div key={p.id} className="activity-card card mb-2 border-0 shadow-sm" style={{ background: '#f8f9fa' }}>
                           <div className="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
@@ -342,46 +346,46 @@ const Dashboard = ({ projects, tasks, onCardClick, onAddProject, onAddTask }) =>
                               <span style={{ fontSize: '1.7em' }}>{icon}</span>
                               <div>
                                 <div className="fw-bold" style={{ fontSize: '1.05em' }}>{p.title || 'Untitled'}</div>
-                                <div className="small text-muted">End: {new Date(p.endDate).toLocaleDateString()}</div>
+                                {/* Display date only if it exists */}
+                                <div className="small text-muted">End: {p.endDate ? new Date(p.endDate).toLocaleDateString() : 'N/A'}</div>
                               </div>
                             </div>
-                            <div className="d-flex flex-column align-items-end gap-1" style={{ minWidth: '160px' }}>
-                              <span className={`badge ${badge}`}>{badgeText}</span>
-                              <div className="progress w-100" style={{ height: '12px', minWidth: '120px', maxWidth: '200px' }}>
-                                <div
-                                  className={`progress-bar${progress === 100 ? ' bg-success' : progress >= 50 ? ' bg-info' : ' bg-warning'}`}
-                                  role="progressbar"
-                                  style={{ width: `${progress}%` }}
-                                  aria-valuenow={progress}
-                                  aria-valuemin="0"
-                                  aria-valuemax="100"
-                                ></div>
-                              </div>
-                            </div>
+                            {/* ... existing progress bar code ... */}
                           </div>
                         </div>
                       );
                     })}
-                  {/* ...existing code for recent tasks... */}
+                  {/* Show latest tasks (by dueDate if available, otherwise just latest added) */}
                   {Object.entries(tasks)
                     .flatMap(([pid, tlist]) => tlist.map(t => ({ ...t, pid })))
-                    .filter(t => t.dueDate)
-                    .sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate))
-                    .slice(0, 2)
+                    .sort((a, b) => {
+                      const dateA = a.dueDate ? new Date(a.dueDate) : null;
+                      const dateB = b.dueDate ? new Date(b.dueDate) : null;
+                      if (dateA && dateB) return dateB - dateA; // Both have dates, sort descending
+                      if (dateA) return -1; // Only A has a date, A comes first
+                      if (dateB) return 1;  // Only B has a date, B comes first
+                      // Optional: Add secondary sort by ID or title if no dates
+                      return 0; // Keep original relative order if no dates
+                    })
+                    .slice(0, 2) // Take top 2
                     .map((t, idx) => {
-                      let icon = '📝';
+                      // Define an icon for tasks
+                      const icon = '📝'; // Example: Memo icon
+                      // Determine badge based on status
                       let badge = 'bg-secondary';
-                      if (t.status === 'Completed') { badge = 'bg-success'; icon = '✅'; }
-                      else if (t.status === 'In Progress' || t.status === 'Ongoing') { badge = 'bg-info'; icon = '🔄'; }
-                      else if (t.status === 'Pending') { badge = 'bg-warning text-dark'; icon = '⏳'; }
+                      if (t.status === 'Completed') badge = 'bg-success';
+                      else if (t.status === 'In Progress' || t.status === 'Ongoing') badge = 'bg-info';
+                      else if (t.status === 'Pending') badge = 'bg-warning text-dark';
+
                       return (
-                        <div key={t.title + t.dueDate + idx} className="activity-card card mb-2 border-0 shadow-sm" style={{ background: '#fdf6ed' }}>
+                        <div key={t.title + (t.dueDate || idx)} className="activity-card card mb-2 border-0 shadow-sm" style={{ background: '#fdf6ed' }}>
                           <div className="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
                             <div className="d-flex align-items-center gap-3">
                               <span style={{ fontSize: '1.5em' }}>{icon}</span>
                               <div>
                                 <div className="fw-bold" style={{ fontSize: '1em' }}>{t.title}</div>
-                                <div className="small text-muted">Due: {new Date(t.dueDate).toLocaleDateString()}</div>
+                                {/* Display date only if it exists */}
+                                <div className="small text-muted">Due: {t.dueDate ? new Date(t.dueDate).toLocaleDateString() : 'N/A'}</div>
                               </div>
                             </div>
                             <span className={`badge ${badge}`}>{t.status}</span>
